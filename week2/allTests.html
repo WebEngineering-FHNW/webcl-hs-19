@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> All Tests from Bundle</title>
+</head>
+<body>
+
+<h1>All Tests loaded synchronously from bundle</h1>
+
+<p>Bundle via <tt>rollup -o allTestsSuiteBundle.js -f es -w . allTestsSuite.js</tt> or <br>
+   run the tests <a href="./allTestsAsync.html">asynchronously</a>.</p>
+
+
+<pre id="out"></pre>
+
+<!--all asynchronous tests bundled and executed in a synchronous fashion-->
+<script src="./allTestsSuiteBundle.js"></script>
+
+<hr/>
+
+<script>
+    // Since the bundle is loaded before this code, we can refer to the "total" in the global namespace
+    document.writeln(total);
+</script>
+tests
+
+</body>
+</html>
