@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSSValidation</title>
+    <style>
+        form {
+            display:                grid;
+            grid-template-columns:  max-content max-content;
+        }
+
+        /* todo: style invalid input */
+
+    </style>
+</head>
+<body>
+
+Show various input types and how they validate.
+
+<form>
+    <label>text, search  </label>  <input id="input1" type="text" pattern="[a-z]*">
+    <label>email         </label>  <input type="email" >
+    <label>url           </label>  <input type="url" >
+    <label>tel           </label>  <input type="tel" >
+    <label>number        </label>  <input type="number" >
+    <label>date          </label>  <input type="date" >
+    <label>datetime-local</label>  <input type="datetime-local" >
+    <label>time          </label>  <input type="time" >
+    <label>week          </label>  <input type="week" >
+    <label>month         </label>  <input type="month" >
+    <label>color         </label>  <input type="color" >
+</form>
+radio, checkbox, range
+
+<script>
+    const input1 = document.getElementById("input1");
+    input1.oninput = _ => console.dir(input1);
+
+    // todo: work with invalid input
+
+</script>
+
+</body>
+</html>
