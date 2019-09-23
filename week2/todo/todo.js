@@ -1,21 +1,27 @@
-import { Observable, ObservableList }   from "../observable/observable.js";
-import { Scheduler }                    from "../dataflow/dataflow.js";
-import { fortuneService }               from "./fortuneService.js";
+import { ObservableList } from "../observable/observable.js";
+import { Attribute }      from "../presentationModel/presentationModel.js";
+import { Scheduler }      from "../dataflow/dataflow.js";
+import { fortuneService } from "./fortuneService.js";
 
 export { TodoController, TodoItemsView, TodoTotalView, TodoOpenView}
 
 const TodoController = () => {
 
-    const Todo = () => {                                // facade
-        const textAttr = Observable("text");            // we current don't expose it as we don't use it elsewhere
-        const doneAttr = Observable(false);
+    const Todo = () => {                               // facade
+        const textAttr = Attribute("text");
+        const doneAttr = Attribute(false);
+
+        textAttr.setConverter( input => input.toUpperCase() );
+        textAttr.setValidator( input => input.length >= 3   );
+
         return {
-            getDone:       doneAttr.getValue,
-            setDone:       doneAttr.setValue,
-            onDoneChanged: doneAttr.onChange,
-            setText:       textAttr.setValue,
-            getText:       textAttr.getValue,
-            onTextChanged: textAttr.onChange,
+            getDone:            doneAttr.valueObs.getValue,
+            setDone:            doneAttr.valueObs.setValue,
+            onDoneChanged:      doneAttr.valueObs.onChange,
+            getText:            textAttr.valueObs.getValue,
+            setText:            textAttr.setConvertedValue,
+            onTextChanged:      textAttr.valueObs.onChange,
+            onTextValidChanged: textAttr.validObs.onChange,
         }
     };
 
@@ -86,7 +92,15 @@ const TodoItemsView = (todoController, rootElement) => {
             removeMe();
         } );
 
+        inputElement.oninput = _ => todo.setText(inputElement.value);
+
         todo.onTextChanged(() => inputElement.value = todo.getText());
+
+        todo.onTextValidChanged(
+            valid => valid
+              ? inputElement.classList.remove("invalid")
+              : inputElement.classList.add("invalid")
+        );
 
         rootElement.appendChild(deleteButton);
         rootElement.appendChild(inputElement);

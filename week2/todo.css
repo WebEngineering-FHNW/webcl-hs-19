@@ -42,3 +42,6 @@ input[type=text]:focus {
     color: red;
     font-size: 1.3em;
 }
+input.invalid {
+    color: red;
+}
