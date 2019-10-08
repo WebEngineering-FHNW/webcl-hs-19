@@ -17,3 +17,10 @@ Note that todo items are not yet created:
 - Projectors create the views and register listeners for both directions
 [Todo View](https://webengineering-fhnw.github.io/webcl-hs-19/week3/todo/View.html), 
 [Tests](https://webengineering-fhnw.github.io/webcl-hs-19/week3/allTestsAsync.html)
+
+## week 4
+- Contains new application to manage persons in a master-/detailview
+- Specific person projectors and rich attributes prepared to be completed
+[Todo View](https://webengineering-fhnw.github.io/webcl-hs-19/week4/todo/View.html), 
+[Person View](https://webengineering-fhnw.github.io/webcl-hs-19/week4/person/View.html), 
+[Tests](https://webengineering-fhnw.github.io/webcl-hs-19/week4/allTestsAsync.html)
