@@ -10,16 +10,16 @@ const VALID = "valid";
 
 const Attribute = value => {
 
-    const observables = {};
+    const observables = {}; // Flyweight pattern
 
-    const hasObs = name => observables.hasOwnProperty(name);
+    const getObs = (propname, initvalue=value) =>
+        hasObs(propname)
+        ? observables[propname]
+        : observables[propname] = Observable(initvalue); // lazy init
 
-    const getObs = (name, initValue = null) =>
-        hasObs(name)
-            ? observables[name]
-            : observables[name] = Observable(initValue);
+    const hasObs = propname => observables.hasOwnProperty(propname);
 
-    getObs(VALUE, value); // initialize the value at least
+    getObs(VALUE, value);
 
     let   convert           = id ;
     const setConverter      = converter => {
