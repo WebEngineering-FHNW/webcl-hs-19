@@ -1,8 +1,7 @@
-import { ObservableList, Observable }                       from "../observable/observable.js";
 import { Attribute, LABEL }                                 from "../presentationModel/presentationModel.js";
-import { listItemProjector, formProjector }     from "./personProjector.js";
+import { listItemProjector, formProjector }                 from "./instantUpdateProjector.js";
 
-export { MasterController, MasterView, SelectionController, DetailView, Person, NoPerson }
+export { MasterView, DetailView, Person, NoPerson, ALL_ATTRIBUTE_NAMES }
 
 const ALL_ATTRIBUTE_NAMES = ['firstname', 'lastname'];
 
@@ -22,28 +21,15 @@ const Person = () => {                               // facade
     }
 };
 
-const MasterController = modelConstructor => {
-
-    const listModel = ObservableList([]); // observable array of models, this state is private
-
-    return {
-        addModel:            () => listModel.add(modelConstructor()),
-        removeModel:         listModel.del,
-        onModelAdd:          listModel.onAdd,
-        onModelRemove:       listModel.onDel,
-    }
-};
-
-
 // View-specific parts
 
-const MasterView = (masterController, selectionController, rootElement) => {
+const MasterView = (listController, selectionController, rootElement) => {
 
     const render = person =>
-        listItemProjector(masterController, selectionController, rootElement, person, ALL_ATTRIBUTE_NAMES);
+        listItemProjector(listController, selectionController, rootElement, person, ALL_ATTRIBUTE_NAMES);
 
     // binding
-    masterController.onModelAdd(render);
+    listController.onModelAdd(render);
 };
 
 const NoPerson = (() => { // one time creation, singleton
@@ -52,19 +38,6 @@ const NoPerson = (() => { // one time creation, singleton
     johnDoe.lastname.setConvertedValue("");
     return johnDoe;
 })();
-
-const SelectionController = noSelection => {
-
-    const selectedModelObs = Observable(noSelection);
-
-    return {
-        setSelectedModel : selectedModelObs.setValue,
-        getSelectedModel : selectedModelObs.getValue,
-        onModelSelected:   selectedModelObs.onChange,
-        clearSelection:     () => selectedModelObs.setValue(noSelection),
-    }
-};
-
 
 const DetailView = (selectionController, rootElement) => {
 
