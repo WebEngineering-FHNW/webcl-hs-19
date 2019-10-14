@@ -1,6 +1,6 @@
-import {VALUE, VALID, EDITABLE, LABEL} from "../presentationModel/presentationModel.js";
+import {EDITABLE, LABEL, VALID, VALUE} from "../presentationModel/presentationModel.js";
 
-export { personListItemProjector, personFormProjector }
+export { personListItemProjector, formProjector }
 
 const bindTextInput = (textAttr, inputElement) => {
     inputElement.oninput = _ => textAttr.setConvertedValue(inputElement.value);
@@ -66,27 +66,29 @@ const personListItemProjector = (masterController, selectionController, rootElem
     selectionController.setSelectedPerson(person);
 };
 
-const personFormProjector = (detailController, rootElement, person) => {
+const formProjector = (detailController, rootElement, model, attributeNames) => {
 
     const divElement = document.createElement("DIV");
     divElement.innerHTML = `
     <FORM>
         <DIV class="detail-form">
-            <LABEL for="firstname"></LABEL>
-            <INPUT TYPE="text" size="20" id="firstname">   
-            <LABEL for="lastname"></LABEL>
-            <INPUT TYPE="text" size="20" id="lastname">   
         </DIV>
     </FORM>`;
+    const detailFormElement = divElement.querySelector(".detail-form");
 
-    bindTextInput(person.firstname, divElement.querySelector('#firstname'));
-    bindTextInput(person.lastname,  divElement.querySelector('#lastname'));
+    attributeNames.forEach(attributeName => {
+        const labelElement = document.createElement("LABEL"); // add view for attribute of this name
+        labelElement.setAttribute("for", attributeName);
+        const inputElement = document.createElement("INPUT");
+        inputElement.setAttribute("TYPE", "text");
+        inputElement.setAttribute("SIZE", "20");
+        inputElement.setAttribute("ID", attributeName);
+        detailFormElement.appendChild(labelElement);
+        detailFormElement.appendChild(inputElement);
 
-    // beware of memory leak in person.firstname observables
-    person.firstname.getObs(LABEL, '')
-        .onChange(label => divElement.querySelector('[for=firstname]').textContent = label);
-    person.lastname.getObs(LABEL, '')
-        .onChange(label => divElement.querySelector('[for=lastname]').textContent = label);
+        bindTextInput(model[attributeName], inputElement);
+        model[attributeName].getObs(LABEL, '').onChange(label => labelElement.textContent = label);
+    });
 
     rootElement.firstChild.replaceWith(divElement);
 };
