@@ -37,23 +37,23 @@ const listItemProjector = (masterController, selectionController, rootElement, m
     const deleteButton      = document.createElement("Button");
     deleteButton.setAttribute("class","delete");
     deleteButton.innerHTML  = "&times;";
-    deleteButton.onclick    = _ => masterController.removePerson(model);
+    deleteButton.onclick    = _ => masterController.removeModel(model);
 
     const inputElements = [];
 
     attributeNames.forEach( attributeName => {
         const inputElement = textInputProjector(model[attributeName]);
-        inputElement.onfocus = _ => selectionController.setSelectedPerson(model);
+        inputElement.onfocus = _ => selectionController.setSelectedModel(model);
         inputElements.push(inputElement);
     });
 
-    selectionController.onPersonSelected(
+    selectionController.onModelSelected(
         selected => selected === model
           ? deleteButton.classList.add("selected")
           : deleteButton.classList.remove("selected")
     );
 
-    masterController.onPersonRemove( (removedPerson, removeMe) => {
+    masterController.onModelRemove( (removedPerson, removeMe) => {
         if (removedPerson !== model) return;
         rootElement.removeChild(deleteButton);
         inputElements.forEach( inputElement => rootElement.removeChild(inputElement));
@@ -63,7 +63,7 @@ const listItemProjector = (masterController, selectionController, rootElement, m
 
     rootElement.appendChild(deleteButton);
     inputElements.forEach( inputElement => rootElement.appendChild(inputElement));
-    selectionController.setSelectedPerson(model);
+    selectionController.setSelectedModel(model);
 };
 
 const formProjector = (detailController, rootElement, model, attributeNames) => {

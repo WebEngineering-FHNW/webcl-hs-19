@@ -1,8 +1,8 @@
 
-import { MasterController, SelectionController, MasterView, DetailView } from './person.js';
+import { MasterController, SelectionController, MasterView, DetailView, Person, NoPerson } from './person.js';
 
-const masterController    = MasterController();
-const selectionController = SelectionController();
+const masterController    = MasterController(Person);
+const selectionController = SelectionController(NoPerson);
 
 // create the sub-views, incl. binding
 
@@ -11,4 +11,4 @@ DetailView(selectionController, document.getElementById('detailContainer'));
 
 // binding of the main view
 
-document.getElementById('plus').onclick    = _ => masterController.addPerson();
+document.getElementById('plus').onclick    = _ => masterController.addModel();
