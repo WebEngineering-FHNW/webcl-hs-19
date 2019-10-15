@@ -1,5 +1,6 @@
 
-import { MasterController, SelectionController, MasterView, DetailView } from './person.js';
+import { ListController, SelectionController,  } from './controller.js';
+import { MasterView, DetailView, Person, NoPerson } from './person.js';
 import { Suite }                from "../test/test.js";
 
 const personSuite = Suite("person");
@@ -11,8 +12,8 @@ personSuite.add("crud", assert => {
     const detailContainer = document.createElement("div");
     detailContainer.innerHTML = "<div>to replace</div>";
 
-    const masterController    = MasterController();
-    const selectionController = SelectionController();
+    const masterController    = ListController(Person);
+    const selectionController = SelectionController(NoPerson);
 
     // create the sub-views, incl. binding
 
@@ -23,11 +24,11 @@ personSuite.add("crud", assert => {
 
     assert.is(masterContainer.children.length, 0*elementsPerRow);
 
-    masterController.addPerson();
+    masterController.addModel();
 
     assert.is(masterContainer.children.length, 1*elementsPerRow);
 
-    masterController.addPerson();
+    masterController.addModel();
 
     assert.is(masterContainer.children.length, 2*elementsPerRow);
 
