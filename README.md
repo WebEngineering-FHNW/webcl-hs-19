@@ -24,3 +24,11 @@ Note that todo items are not yet created:
 [Todo View](https://webengineering-fhnw.github.io/webcl-hs-19/week4/todo/View.html), 
 [Person View](https://webengineering-fhnw.github.io/webcl-hs-19/week4/person/View.html), 
 [Tests](https://webengineering-fhnw.github.io/webcl-hs-19/week4/allTestsAsync.html)
+
+## week 5
+- Generalised projectors which can create the gui elements list and form
+- The projectors take a model and a list of attributes to display
+- Projectors can be reused for any model, automatically creating rich attributes, bindings, etc.
+[Person View](https://webengineering-fhnw.github.io/webcl-hs-19/week5/person/View.html), 
+[Tests](https://webengineering-fhnw.github.io/webcl-hs-19/week5/allTestsAsync.html)
+
