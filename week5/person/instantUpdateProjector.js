@@ -53,8 +53,8 @@ const listItemProjector = (masterController, selectionController, rootElement, m
           : deleteButton.classList.remove("selected")
     );
 
-    masterController.onModelRemove( (removedPerson, removeMe) => {
-        if (removedPerson !== model) return;
+    masterController.onModelRemove( (removedModel, removeMe) => {
+        if (removedModel !== model) return;
         rootElement.removeChild(deleteButton);
         inputElements.forEach( inputElement => rootElement.removeChild(inputElement));
         selectionController.clearSelection();
