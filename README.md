@@ -32,3 +32,10 @@ Note that todo items are not yet created:
 [Person View](https://webengineering-fhnw.github.io/webcl-hs-19/week5/person/View.html), 
 [Tests](https://webengineering-fhnw.github.io/webcl-hs-19/week5/allTestsAsync.html)
 
+## week 6
+- CSS-in-JS: The Projector now also provides a css style for the defined classnames which when used has precedence over external css definitions
+- Dynamically added grid column for each passed attribute
+- More independence by checking whether there is a child to replace or the div should just be added
+- A focus animation on the inputfields in the style of material design
+[Person View](https://webengineering-fhnw.github.io/webcl-hs-19/week6/person/View.html), 
+[Tests](https://webengineering-fhnw.github.io/webcl-hs-19/week6/allTestsAsync.html)
