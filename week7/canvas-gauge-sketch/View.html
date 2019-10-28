@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View</title>
+    <script src="gauge.js"></script>
+
+
+    <style>
+        p {
+            padding: 0 10em 0 4em;
+        }
+        canvas {
+            margin: 0.1em 1em 0 1em;
+            --section-divider:   0.6;
+        }
+
+        .classic {
+            --section-one-color: red;
+            --section-two-color: green;
+            --progress-color:    rgba(116,160,194,0.5);
+        }
+        .citrus {
+            --section-one-color: orange;
+            --section-two-color: lightgreen;
+            --progress-color:    rgba(255,0,0,0.2);
+        }
+        .elegant {
+            --section-one-color: darkgrey;
+            --section-two-color: grey;
+            --progress-color:    rgba(0,0,0,0.2);
+        }
+    </style>
+
+</head>
+<body>
+
+<h1>Custom Component: Progress Indicator Gauge</h1>
+
+<p>
+    This example shows a way of building a custom component in plain JavaScript
+    with <strong>no dependencies</strong> and no Web Components and no
+    Custom Elements.
+    This type of custom component is plain HTML/JS and
+    can thus be used in combination with any framework.
+    It is never subject to framework or version churn.
+    It never goes out of fashion. It needs no tools for building.
+    This is not a library. It is just way of writing code.
+</p><p>
+    Style and core property values are configured via CSS.
+    The component itself is not an object. It is not using "new", "class", or "this".
+    It introduces no prototype nor any other shared mutable state.
+    It is <strong>just a function</strong>.
+    The component maintains no state. It solely works on the arguments that have been passed to it.
+    This approach needs no lifecycle functions.
+    All interaction with the component is set up on the calling site.
+    See the source code of this page as an example.
+</p><p>
+    17.11.2018: added touch and mouse support to set the progress value directly on the control.
+</p><p>
+    <a href="https://github.com/Dierk/HtmlJs/blob/master/gauge/gauge.js">Source code</a>,
+    <a href="https://github.com/Dierk/HtmlJs/blob/master/gauge/gaugeTest.js">Tests</a>,
+    <a href="https://github.com/Dierk/HtmlJs/blob/master/gauge/View.html">View</a>,
+    Do-what-you-want-but-leave-me-alone License.
+</p>
+
+<canvas id="progressView" width="200" height="200" class="classic" draggable="false"></canvas>
+
+<p>
+    Style:
+    <select id="colors">
+        <option>classic</option>
+        <option>citrus</option>
+        <option>elegant</option>
+    </select>
+</p>
+
+
+<p>
+    Progress:<br>
+    <input type="range" id="range"     value="55">    <br>
+    Threshold:<br>
+    <input type="range" id="threshold" value="60">    <br>
+    Size:<br>
+    <input type="range" id="size"      value="0">     <br>
+    Show thumb:
+    <input type="checkbox" id="thumb"  >              <br>
+    <button             id="animate">Animate</button> <br>
+</p>
+
+<script>
+    // only to avoid duplication
+    const repaint = () => {
+        progressPie(progressView, range.value / 100, thumb.checked);
+    };
+
+    // modifying the properties through a style class
+    colors.onchange = evt => {
+        progressView.className = colors.value;
+        repaint();
+    };
+
+    // just updating with new values
+    range.oninput = repaint;
+
+    // updating by setting a computed style
+    threshold.oninput = evt => {
+        progressView.style.setProperty("--section-divider", threshold.value / 100);
+        repaint();
+    };
+
+    // interacting with the canvas is interacting with the component
+    size.oninput = evt => {
+        progressView.width  = 200 + 4 * size.value;
+        progressView.height = progressView.width;
+        repaint();
+    };
+
+    thumb.onclick = repaint;
+    thumb.oninput = repaint; // when touch
+
+    //animate (gets nicer when using observables)
+    animate.onclick = evt => {
+        const update = value => {
+            range.value = value;
+            repaint();
+            if (value <= 100) {
+                setTimeout( () => update(value + 1), 10)
+            }
+        };
+        update(0)
+    };
+
+    registerForMouseAndTouch(progressView);
+
+    repaint();                                  // initial display of the component
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<svg width="100%" height="100%" version="1.1" viewBox="-2.5 1.995575 126 116.0044" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow1" width="150%" height="150%">
+      <feGaussianBlur in="SourceAlpha" result="blur" stdDeviation="5" />
+      <feOffset dx="0" dy="8" in="blur" result="offsetBlur" />
+      <feMerge>
+        <feMergeNode in="offsetBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <radialGradient id="gradient1" gradientUnits="objectBoundingBox" cx="50%" cy="50%" r="50%">
+    <stop offset="38%" stop-color="#000000" stop-opacity="1" />
+    <stop offset="90%" stop-color="#8EC0DD" stop-opacity="1" />
+    <stop offset="46%" stop-color="#073F80" stop-opacity="1" />
+    <stop offset="100%" stop-color="#2F3A46" stop-opacity="1" />
+  </radialGradient>
+  <g id="layer1">
+    <ellipse cx="60" cy="60" rx="30" ry="30" opacity="1" fill="url(#gradient1)" />
+    <ellipse cx="52.5" cy="50" rx="7.5" ry="5" opacity="1" fill="#FEFEFE" fill-opacity="0.8850293" transform="rotate(319 52.5 50)" />
+  </g>
+  <g id="layer2">
+    <path d="M0.5 60.5 Q25.5 30.5 60.5 30.5 Q100.5 30.5 120.5 60.5 Q114.5 4.5 60 5 Q4.500084 5.509181 0.5 60.5 Z " opacity="1" fill="#FDDC99" fill-opacity="1" filter="url(#shadow1)" />
+    <path d="M0.5 60.5 Q25.5 90.5 60.5 90.5 Q100.5 90.5 120.5 60.5 Q115 115 60 115 Q5 115 0.5 60.5 Z " opacity="1" fill="#F4CB76" fill-opacity="1" />
+  </g>
+  <g id="layer3">
+    <path d="M0.5 60.5 Q25 95 60 95 Q100 95 120.5 60.5 Q114.5 4.5 60 5 Q4.500084 5.509181 0.5 60.5 Z " opacity="0" fill="#FDDC99" fill-opacity="0" filter="url(#shadow1)" />
+  </g>
+</svg>
