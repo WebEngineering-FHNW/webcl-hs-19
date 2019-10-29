@@ -16,17 +16,45 @@
             margin: 3em;
         }
 
-        /*todo: style spotlight*/
+        #glasspane.spot-shade {
+            background-color: rgba(115,115,170,0.7);
+            transition: .7s;
+        }
 
+        #glasspane {
+            position: fixed;
+            left:     0;
+            top:      0;
+            width:    100vw;
+            height:   100vh;
+            z-index:  10;                    /* works without but better be explicit */
+            pointer-events:   none;
+            user-input:       none;          /* not needed in all browsers */
+            mix-blend-mode:   multiply;      /* 'overlay' does not work in Safari */
+            /* default: no shading */
+            background-color: white;
+            transition: background-color linear .5s;
+        }
+        #spotlight {
+            position:   fixed;
+            top:        50%;
+            left:       50%;
+            width:      20vh;
+            height:     20vh;
+            background-color: white;
+            border-radius:    50%;
+            box-shadow: 0 0 1em white;
+            transform:  translateX(-50%) translateY(-50%);
+        }
     </style>
 </head>
 <body>
 
 
 <main>
-
-    <!--todo: add spotlight-->
-
+    <div id="glasspane" >
+        <div id="spotlight"></div>
+    </div>
     <div>
         <h1>Spotlight Test Page</h1>
         <p>Use Alt-Mousemove to show spotlight.</p>
@@ -38,7 +66,15 @@
 </main>
 
 <script>
-    // todo: triggering spotlight
+    document.onmousemove = evt => {
+        if( ! evt.altKey) {
+            glasspane.classList.remove('spot-shade');
+            return ;
+        }
+        glasspane.classList.add('spot-shade');
+        spotlight.style['left'] = evt.clientX + 'px';
+        spotlight.style['top']  = evt.clientY + 'px';
+    }
 </script>
 
 
