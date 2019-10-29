@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        :root {
+            margin:     0;
+            padding:    0;
+            box-sizing: border-box;
+            font-family: "Helvetica Neue", "sans-serif";
+        }
+
+        main {
+            margin: 3em;
+        }
+
+        #glasspane {
+            --shadow-color: rgba(115,115,200,0.9);
+            --spot-x: 50%;
+            --spot-y: 50%;
+            position: fixed;
+            display:  none;
+            left:     0;
+            top:      0;
+            width:    100vw;
+            height:   100vh;
+            z-index:  10;                    /* works without but better be explicit */
+            pointer-events:   none;
+            background-image: radial-gradient(
+                    circle at var(--spot-x) var(--spot-y),
+                    transparent 0%,
+                    transparent 15vh,
+                    var(--shadow-color) 16vh,
+                    var(--shadow-color) 100vh);
+        }
+
+    </style>
+</head>
+<body>
+
+
+<main>
+    <div id="glasspane" >
+
+    </div>
+    <div>
+        <h1>Spotlight Test Page</h1>
+        <p>Use Alt-Mousemove to show spotlight.</p>
+        <p>Solution with radial gradient, thx to Andreas Meier.</p>
+        <p style="background: lightblue">some long text some long text some long text some long text some long text
+            some long text some long text some long text some long text some long text
+            some long text some long text some long text some long text some long text
+        </p>
+    </div>
+</main>
+
+<script>
+    document.onmousemove = evt => {
+        if( ! evt.altKey) {
+            glasspane.style['display'] = 'none';
+            return ;
+        }
+        glasspane.style.setProperty('--spot-x', evt.clientX + 'px');
+        glasspane.style.setProperty('--spot-y', evt.clientY + 'px');
+        glasspane.style['display'] = 'initial';
+    }
+</script>
+
+
+</body>
+
+</html>
