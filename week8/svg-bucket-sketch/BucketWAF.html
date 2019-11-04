@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View</title>
+
+    <style>
+        body {
+            margin: 4rem;
+            box-sizing: border-box;
+            width:  100%;
+            height: 100%;
+        }
+        #bucket {
+            width:  60vw;
+            height: 50vh;
+        }
+        svg {
+            width:  100%; /* try to fill the container but keep aspect ratio */
+            height: 100%;
+        }
+        svg rect {
+            stroke-width: 1px;
+            stroke-opacity: 0.1;
+            stroke: black ;
+            mix-blend-mode:multiply
+        }
+        #gradient stop {
+            stop-color: blue;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Fill me</h1>
+
+<div id="bucket">
+
+    <svg viewBox="0 0 120 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="gradient" x1="20%" y1="20%" x2="30%" y2="100%">
+                <stop offset="0%"   stop-opacity="0.2"/>
+                <stop offset="100%" stop-opacity="1.0"/>
+            </linearGradient>
+            <linearGradient id="overlay" x1="0" y1="0" x2="100%" y2="0" >
+                <stop              stop-color="#ECECEC" stop-opacity="0"/>
+                <stop offset="25%" stop-color="white"   stop-opacity="0.7"/>
+                <stop offset="97%" stop-color="#4C3B71" stop-opacity="0.3"/>
+                <stop offset="100%"                     stop-opacity="0"/>
+            </linearGradient>
+        </defs>
+        <path d="M 0 240 C 0 240  0 240 60 240 C 120 240 120 240 120 240 V 240 H 0 V 240 Z" fill="url(#gradient)"/>
+        <!--    <path d="M 0 150 C 0 150 16 200 60 225 C 104 240 120 210 120 210 V 240 H 0 V 150 Z" fill="#72B8F9"/>-->
+        <!--    <path d="M0 80C0 80 26.5 30 60 120C93.5 210 120 140 120 140V240H0V80Z" fill="#72B8F9"/>-->
+        <!--    <path d="M0 40C0 40 26 54.1645 60 40C94 25.8355 120 40 120 40V240H0V40Z" fill="#72B8F9"/>-->
+        <!--    <path d="M 0   0 C 0   0  0   0 60   0 C  0  0 120   0 120   0 V 240 H 0 V  0 Z" fill="#72B8F9"/>-->
+
+        <rect x="0" y="0" width="120" height="240" fill="url(#overlay)"/>
+
+    </svg>
+
+</div>
+
+<script>
+/*      cleaned
+        //     0       0  1   2      3     4   5      6        6               0   interval indexes
+        "M 0 240 C 0 240  0 240 60 240 C 120 240 120 240 120 240 V 240 H 0 V 240 Z",
+        "M 0 150 C 0 150 16 200 60 225 C 104 240 120 210 120 210 V 240 H 0 V 150 Z",
+        "M 0  80 C 0  80 26  30 60 120 C  94 210 120 140 120 140 V 240 H 0 V  80 Z",
+        "M 0  40 C 0  40 26  55 60  40 C  94  25 120  40 120  40 V 240 H 0 V  40 Z",
+        "M 0   0 C 0   0  0   0 60   0 C 120   0 120   0 120   0 V 240 H 0 V   0 Z"
+*/
+
+    const linear = x => x;
+
+    const slope = alpha => x => {
+        if (x < 0) return 0;
+        if (x > 1) return 1;
+        const nom = Math.pow(x,alpha);
+        return nom / (nom + Math.pow(1-x, alpha));
+    };
+
+    const easeBoth = slope(1.3);
+
+    const easeIn = fraction =>
+        fraction < 0.5
+        ? easeBoth(fraction)
+        : linear  (fraction);
+
+    const easeOut = fraction =>
+        fraction > 0.5
+        ? easeBoth(fraction)
+        : linear  (fraction);
+
+    const animate = (tweening, millisecs, callback, onDone) => {
+        let start = null;
+        function paint(timestamp) {
+          if (!start) start = timestamp;
+          const progress = timestamp - start;
+          const fraction = progress / millisecs;
+          const value    = tweening(fraction);
+          callback(value);
+          if (progress < millisecs) {
+            window.requestAnimationFrame(paint);
+          } else {
+            callback(1);
+            if (onDone) onDone();
+          }
+        }
+        callback(0);
+        window.requestAnimationFrame(paint);
+    };
+
+    const stops = [
+        {tween:linear,   ms:  0, values:[ 240,  0, 240, 240, 120, 240, 240 ]},
+        {tween:easeIn,   ms:200, values:[ 150, 16, 200, 225, 104, 240, 210 ]},
+        {tween:linear,   ms:100, values:[ 120, 26,  70, 160,  94, 250, 180 ]},
+        {tween:linear,   ms:300, values:[  40, 26,  55,  40,  94,  25,  40 ]},
+        {tween:easeOut,  ms:400, values:[   0,  0,   0,   0, 120,   0,   0 ]},
+    ];
+
+    const intervalue = (start, end, fraction /* 0 to 1 */) => {
+        const distance = end - start;
+        return start + distance * fraction;
+    };
+
+    const path = document.querySelector("#bucket path");
+    bucket.onclick = evt => {
+
+        const animateStop = stopIndex => animate(
+            stops[stopIndex].tween,
+            stops[stopIndex].ms,
+            fraction => {
+                const vals = pos => intervalue(
+                    stops[stopIndex - 1].values[pos],
+                    stops[stopIndex].values[pos],
+                    fraction
+                );
+                const value = `M 0          ${vals(0)}
+                               C 0          ${vals(0)}   ${vals(1)}  ${vals(2)}    60 ${vals(3)}
+                               C ${vals(4)} ${vals(5)}          120  ${vals(6)}   120 ${vals(6)}
+                               V 240 H 0 V  ${vals(0)} Z`;
+                path.setAttribute('d', value);
+            },
+            () => {
+                if (stopIndex + 1 < stops.length) animateStop(stopIndex + 1)
+            }
+        );
+        animateStop(1)
+    }
+
+</script>
+
+</body>
+</html>

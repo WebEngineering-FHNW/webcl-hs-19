@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View</title>
+
+    <style>
+        body {
+            margin: 4rem;
+            box-sizing: border-box;
+            font-family: "Helvetica Neue", "sans-serif";
+            height: 100vh;
+            background-image: radial-gradient(farthest-corner at 20vw 12vh, white, rgba(127, 116, 205, 0.31));
+            background-repeat: no-repeat;
+
+            --developer-color: #ffe6a5;
+            --project-color:   #d1d7ee;
+        }
+        #topicsOverWeeks {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr;
+            grid-row-gap: 1em;
+            grid-column-gap: .5em;
+        }
+        .topic {
+            min-height: 3em;
+            padding: .2em .5em .2em 50%;
+            border-radius: 3em 0.5em 0.5em 3em;
+            position: relative;
+            display: flex;
+            justify-content: flex-end;
+            text-align: right;
+            align-items: center;
+        }
+        .topic.developer, .topic.project { /* all topics except header */
+        }
+        .developer {
+            background-color: var(--developer-color);
+        }
+        .topic.developer {
+            background-repeat: no-repeat;
+            background-size: 6em;
+            background-position: left top;
+            border: 4px solid var(--developer-color);
+            box-shadow: .3em 0 1px 0px var(--developer-color);
+        }
+        .project {
+            background-color: var(--project-color);
+        }
+        .topic.project {
+            box-shadow: .3em 0 1px 0px var(--project-color);
+        }
+        .week {
+            border-radius: 0.5em;
+            position: relative;  /* allow the yellow overlay to position itself absolutely against this */
+            align-self: end;     /* the content in the grid cells must float to the bottom */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        .week.developer {
+            box-shadow: -.3em 0 1px 0px var(--developer-color), .3em 0 1px 0px var(--developer-color);
+            background: var(--developer-color);
+        }
+        .week.project {
+            box-shadow: -.3em 0 1px 0px var(--project-color), .3em 0 1px 0px var(--project-color);
+            background: var(--project-color);
+        }
+
+        .header {
+            background-color: transparent;
+            color: gray;
+            text-align: center;
+            font-weight: bold;
+            padding: 1em;
+            border-bottom: 1px solid lightgrey;
+        }
+        .assignment {
+            border: 1px solid rgba(0, 0, 125, .1);
+            padding: 0.5em;
+            border-radius: 0.5em;
+            box-shadow: inset 2px 2px .3em white, inset -2px -2px .2em gray;
+            overflow: hidden;
+        }
+        .soll {
+            z-index: 10;
+            background-color: yellow;
+            opacity: 0.4;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            border-radius: 0.5rem;
+            pointer-events: none;
+            user-input: none;
+            user-select: none;
+            text-align: center;
+            font-size: 2em;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .soll.live {
+            opacity: 0.7;
+            pointer-events: auto;
+            color: slateblue;
+        }
+        .week.developer.drop {
+            box-shadow: 0 0 1px .2em var(--project-color);
+        }
+    </style>
+
+</head>
+<body>
+
+<h1>Personaleinsatzplanung</h1>
+
+<main>
+    <div id="topicsOverWeeks">
+
+<!--
+        <div class="topic"><div class="header">Dev/Project</div></div>
+        <div class="week"><div class="header">Week 1</div></div>
+        <div class="week"><div class="header">Week 2</div></div>
+        <div class="week"><div class="header">Week 3</div></div>
+        <div class="week"><div class="header">Week 4</div></div>
+
+        <div class="topic developer">John Doe</div>
+        <div class="week" style="height:10em;">
+            <div class="soll" style="height:7em;"></div>
+            <div class="assignment" style="height:7em;">Project 1, Personal Einsatz, 70%</div>
+            <div class="assignment" style="height:3em;">Project 2, Web Clients, 30%</div>
+        </div>
+        <div class="week" style="height:7em;" >
+            <div class="soll" style="height:7em;"></div>
+        </div>
+        <div class="week" style="height:10em;" >
+            <div class="soll" style="height:10em;"></div>
+        </div>
+        <div class="week" style="height:7em;" >
+            <div class="soll" style="height:7em;"></div>
+        </div>
+
+        <div class="topic project">Personal Einsatz</div>
+        <div class="week" style="height:7em;">
+            <div class="soll" style="height:7em;"></div>
+            <div class="assignment" style="height:3em;">John Doe, 70%</div></div>
+        <div class="week"></div>
+        <div class="week"></div>
+        <div class="week"></div>
+
+        <div class="topic project">Web Clients</div>
+        <div class="week">
+            <div class="assignment" style="height:3em;">John Doe, 30%</div></div>
+        <div class="week"></div>
+        <div class="week"></div>
+        <div class="week"></div>
+-->
+
+    </div>
+
+</main>
+
+<script>
+    const weeks = [
+        {id: 0, label:'Week 31'},
+        {id: 1, label:'Week 32'},
+        {id: 2, label:'Week 33'},
+        {id: 3, label:'Week 34'},
+    ];
+    const devs = [
+        {id:0, img:"img/img0.jpg", name: "Marie-Claude Federspiel"},
+        {id:1, img:"img/img1.jpg", name: "Christian Ribeaud"},
+    ];
+    const avails = [
+        {week:0, devId:0, avail:70},
+        {week:1, devId:0, avail:70},
+        {week:2, devId:0, avail:100},
+        {week:3, devId:0, avail:100},
+        {week:0, devId:1, avail:100},
+        {week:1, devId:1, avail:100},
+        {week:2, devId:1, avail:100},
+        {week:3, devId:1, avail:0},
+    ];
+    const projects = [
+        {id:0, name: "Personal Einsatz Planung"},
+        {id:1, name: "Web Clients"},
+    ];
+    const FTEs = [
+        {week:0, projId:0, fte:100},
+        {week:1, projId:0, fte:150},
+        {week:2, projId:0, fte:100},
+    ];
+    const assignments = [
+        { week:0, devId:0, projId:0, amount: 70},
+        { week:0, devId:0, projId:1, amount: 30},
+    ];
+
+
+
+    const render = () => {
+
+        const dom = innerString => {
+            const div = document.createElement("DIV");
+            div.innerHTML = innerString;
+            return div.firstChild;
+        };
+
+        const root = dom(`<div id="topicsOverWeeks">`);
+
+        const propSum = (propname, array) => array.reduce((accu, cur) => accu + cur[propname], 0);
+        const pctScale = pct => '' + pct + 'px';
+
+        // render header
+
+        root.appendChild(dom('<div class="topic"></div>'));
+        weeks.forEach(week => {
+            root.appendChild(dom(`<div class="week"><div class="header">${week.label}</div></div>`));
+        });
+
+        // render devs
+        let live = false;
+        let dragIsOn = false;
+        document.onkeydown = evt => {
+            if (!evt.altKey) {
+                return;
+            }
+            live = true;
+            document.querySelectorAll(".soll").forEach(el => {
+                el.classList.add("live");
+            });
+        };
+        document.onkeyup = evt => {
+            if (!live) return;
+            live = false;
+            dragIsOn = false;
+            root.querySelectorAll(".soll").forEach(el => {
+                el.classList.remove("live");
+            });
+        };
+
+        devs.forEach(dev => {
+            root.appendChild(dom(`<div class="topic developer" style="background-image:url(${dev.img})">${dev.name}</div>`));
+            weeks.forEach(week => {
+                // actual height is maximum of the sum of all assignments in this week or the availability
+                const devThisWeek = it => it.week === week.id && it.devId === dev.id;
+                const availThisWeek = avails.find(devThisWeek);
+                let avail = availThisWeek ? availThisWeek.avail : 0;
+                const assignmentsThisWeek = assignments.filter(devThisWeek);
+                const sum = propSum('amount', assignmentsThisWeek);
+                const height = () => Math.max(avail, sum);
+                const weekElement = dom(`<div class="week developer" id="dev_${dev.id}_week_${week.id}" style="height:${pctScale(height())};"></div>`);
+                root.appendChild(weekElement);
+
+                const availElement = dom(`<div class="soll" style="height:${pctScale(avail)};">${avail} %</div>`);
+                weekElement.appendChild(availElement);
+
+                availElement.onmousedown = evt => {
+                    dragIsOn = true;
+                };
+                availElement.onmousemove = evt => {
+                    if (!dragIsOn) return;
+                    avail -= evt.movementY;
+                    avail = Math.max(0, avail);
+                    availElement.style.height = pctScale(avail);
+                    availElement.innerText = avail + " %";
+                    weekElement.style.height = pctScale(height());
+                }
+                const finish = evt => {
+                    availThisWeek.avail = avail;
+                    dragIsOn = false;
+                    render(); // optional
+                };
+                availElement.onmouseup    = finish;
+                availElement.onmouseleave = finish;
+
+                weekElement.ondrop = evt => {
+                    evt.preventDefault();
+                    const data = evt.dataTransfer.getData("text/json");
+                    evt.target.classList.remove("drop");
+                    const dragData = JSON.parse(data);
+                    const assignment = assignments.find( it =>
+                           it.week   === dragData.week
+                        && it.devId  === dragData.devId
+                        && it.projId === dragData.projId
+                    );
+                    if (assignment) {
+                        assignment.week   = week.id;
+                        assignment.devId  = dev.id;
+                        render();
+                    }
+                };
+                weekElement.ondragover = evt => {
+                    evt.preventDefault(); // allow drop
+                    evt.target.classList.add("drop");
+                };
+                weekElement.ondragleave = evt => {
+                    evt.preventDefault(); // allow drop
+                    evt.target.classList.remove("drop");
+                };
+
+                assignmentsThisWeek.forEach(assignment => {
+                    const assignElement = dom(
+                        `<div class="assignment project" draggable="true" style="height:${pctScale(assignment.amount)};">
+                        ${projects.find(it => it.id === assignment.projId).name}, ${assignment.amount}%
+                     </div>`
+                    );
+                    assignElement.ondragstart = evt => {
+                        console.log("assignment drag", evt.target.id);
+                        // evt.dataTransfer.setData("assignment", assignment)
+                        evt.dataTransfer.setData("text/json", JSON.stringify(assignment))
+                    }
+                    weekElement.appendChild(assignElement);
+                })
+            });
+        });
+
+        // render projects
+
+        projects.forEach(project => {
+            root.appendChild(dom(`<div class="topic project">${project.name}</div>`));
+            weeks.forEach(week => {
+                // actual height is maximum of the sum of all assignments in this week or the needed FTEs
+                const projThisWeek = it => it.week === week.id && it.projId === project.id;
+                const needed = propSum('fte', FTEs.filter(projThisWeek));
+                const assignmentsThisWeek = assignments.filter(projThisWeek);
+                const sum = propSum('amount', assignmentsThisWeek);
+                const height = Math.max(needed, sum);
+                const weekElement = dom(`<div class="week project" id="proj_${project.id}_week_${week.id}" style="height:${pctScale(height)};"></div>`);
+                root.appendChild(weekElement);
+
+                const neededElement = dom(`<div class="soll" style="height:${pctScale(needed)};"></div>`);
+                weekElement.appendChild(neededElement);
+
+                assignmentsThisWeek.forEach(assignment => {
+                    const assignElement = dom(
+                        `<div class="assignment developer" style="height:${pctScale(assignment.amount)};">
+                        ${devs.find(it => it.id === assignment.devId).name}, ${assignment.amount}%
+                     </div>`
+                    );
+                    weekElement.appendChild(assignElement);
+                })
+            });
+        });
+
+        const topicsOverWeeks = document.getElementById("topicsOverWeeks");
+        topicsOverWeeks.replaceWith(root);
+    }
+
+    render();
+
+
+
+
+
+</script>
+
+</body>
+</html>

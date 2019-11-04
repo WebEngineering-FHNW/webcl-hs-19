@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View</title>
+
+    <style>
+        body {
+            margin: 4rem;
+            box-sizing: border-box;
+            width:  100%;
+            height: 100%;
+        }
+        #bucket {
+            width:  60vw;
+            height: 50vh;
+            overflow: hidden;
+        }
+        svg {
+            width: 100%; /* try to fill the container but keep aspect ratio*/
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Fill me</h1>
+
+<div id="bucket">
+
+    <svg viewBox="0 0 120 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="120" height="240" fill="#C4C4C4" />
+    <path d="M 0 240 C 0 240  0 240 60 240 C 120 240 120 240 120 240 V 240 H 0 V 240 Z" fill="#72B8F9"/>
+        <!--    <path d="M 0 150 C 0 150 16 200 60 225 C 104 240 120 210 120 210 V 240 H 0 V 150 Z" fill="#72B8F9"/>-->
+        <!--    <path d="M0 80C0 80 26.5 30 60 120C93.5 210 120 140 120 140V240H0V80Z" fill="#72B8F9"/>-->
+        <!--    <path d="M0 40C0 40 26 54.1645 60 40C94 25.8355 120 40 120 40V240H0V40Z" fill="#72B8F9"/>-->
+        <!--    <path d="M 0   0 C 0   0  0   0 60   0 C  0  0 120   0 120   0 V 240 H 0 V  0 Z" fill="#72B8F9"/>-->
+    </svg>
+
+</div>
+
+<script>
+/*      cleaned
+        //     0       0  1   2      3     4   5      6        6               0   interval indexes
+        "M 0 240 C 0 240  0 240 60 240 C 120 240 120 240 120 240 V 240 H 0 V 240 Z",
+        "M 0 150 C 0 150 16 200 60 225 C 104 240 120 210 120 210 V 240 H 0 V 150 Z",
+        "M 0  80 C 0  80 26  30 60 120 C  94 210 120 140 120 140 V 240 H 0 V  80 Z",
+        "M 0  40 C 0  40 26  55 60  40 C  94  25 120  40 120  40 V 240 H 0 V  40 Z",
+        "M 0   0 C 0   0  0   0 60   0 C 120   0 120   0 120   0 V 240 H 0 V   0 Z"
+*/
+
+    const intervals = [
+        [ 240,  0, 240, 240, 120, 240, 240 ],
+        [ 150, 16, 200, 225, 104, 240, 210 ],
+        [  80, 26,  30, 120,  94, 210, 140 ],
+        [  40, 26,  55,  40,  94,  25,  40 ],
+        [   0,  0,   0,   0, 120,   0,   0 ],
+    ];
+    const fractions = 30;
+    const intervalue = (start, end, fraction) => {
+        const unit = end - start;
+        const step = unit / fractions;
+        return start + step * fraction;
+    };
+
+    const path = document.querySelector("#bucket path");
+    bucket.onclick = evt => {
+
+        const animateFraction = (stopIndex, fractionIndex) => {
+            if (stopIndex >= intervals.length) return;
+            if (fractionIndex >= fractions) { // well, it is constant 7
+                animateFraction(stopIndex + 1, 1);
+                return;
+            }
+            const vals = pos => intervalue(intervals[stopIndex-1][pos], intervals[stopIndex][pos], fractionIndex);
+            setTimeout( x => {
+                const value = `M 0 ${vals(0)} C 0 ${vals(0)}  ${vals(1)} ${vals(2)} 60 ${vals(3)} C ${vals(4)} ${vals(5)} 120 ${vals(6)} 120 ${vals(6)} V 240 H 0 V ${vals(0)} Z`;
+                path.setAttribute('d', value);
+                animateFraction(stopIndex, fractionIndex + 1);
+            }, 10)
+        };
+        animateFraction(1,0);
+
+    }
+
+</script>
+
+<div id="out"></div>
+</body>
+</html>
