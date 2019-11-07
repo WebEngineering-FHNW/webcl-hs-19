@@ -123,7 +123,7 @@
             pointer-events: auto;
             color: slateblue;
         }
-        .week.developer.drop {
+        .week.drop {
             background-color: var(--hightlight-overlay);
         }
     </style>
@@ -208,6 +208,11 @@
         {week:0, projId:0, fte:100},
         {week:1, projId:0, fte:150},
         {week:2, projId:0, fte:100},
+        {week:3, projId:0, fte:100},
+        {week:0, projId:1, fte:  0},
+        {week:1, projId:1, fte: 50},
+        {week:2, projId:1, fte:100},
+        {week:3, projId:1, fte:  0},
     ];
     const assignments = [
         { week:0, devId:0, projId:0, amount: 70},
@@ -230,8 +235,8 @@
 
     const finishDrag = evt => {
         if (!dragIsOn) return;
-        dragInfo.availModel.avail =  5 * Math.round(dragInfo.avail / 5);
         dragIsOn = false;
+        dragInfo.availModel[dragInfo.propname] =  5 * Math.round(dragInfo.avail / 5);
         dragInfo = null;
         render();
     };
@@ -273,7 +278,13 @@
         // render devs
 
         devs.forEach(dev => {
-            root.appendChild(dom(`<div class="topic developer" style="background-image:url(${dev.img})">${dev.name}</div>`));
+            const devElement = dom(`<div class="topic developer" style="background-image:url(${dev.img})" draggable="true">${dev.name}</div>`);
+            root.appendChild(devElement);
+
+            devElement.ondragstart = evt => {
+                evt.dataTransfer.setData("text/json", JSON.stringify( {devId : dev.id} ))
+            };
+
             weeks.forEach(week => {
                 // actual height is maximum of the sum of all assignments in this week or the availability
                 const devThisWeek = it => it.week === week.id && it.devId === dev.id;
@@ -295,15 +306,18 @@
                         availElement: availElement, // the dom element representing avail
                         weekElement: weekElement,
                         availModel: availModel,
+                        propname: 'avail',
                         assignSum: assignSum, // sum of all assignments this week
                     }
                 };
 
                 weekElement.ondrop = evt => {
-                    evt.preventDefault();
                     const data = evt.dataTransfer.getData("text/json");
-                    evt.target.classList.remove("drop");
+                    if(!data) return;
                     const dragData = JSON.parse(data);
+                    if(dragData.projId == null) return;
+                    evt.preventDefault();
+                    evt.target.classList.remove("drop");
                     const assignment = assignments.find( it =>
                            it.week   === dragData.week
                         && it.devId  === dragData.devId
@@ -334,10 +348,8 @@
                         </div>`
                     );
                     assignElement.ondragstart = evt => {
-                        console.log("assignment drag", evt.target.id);
-                        // evt.dataTransfer.setData("assignment", assignment)
                         evt.dataTransfer.setData("text/json", JSON.stringify(assignment))
-                    }
+                    };
                     weekElement.appendChild(assignElement);
                 })
             });
@@ -350,15 +362,61 @@
             weeks.forEach(week => {
                 // actual height is maximum of the sum of all assignments in this week or the needed FTEs
                 const projThisWeek = it => it.week === week.id && it.projId === project.id;
-                const needed = propSum('fte', FTEs.filter(projThisWeek));
+                const fteModel = FTEs.find(projThisWeek);
+                const needed = fteModel ? fteModel.fte : 0;
                 const assignmentsThisWeek = assignments.filter(projThisWeek);
-                const sum = propSum('amount', assignmentsThisWeek);
-                const height = Math.max(needed, sum);
+                const assignSum = propSum('amount', assignmentsThisWeek);
+                const height = Math.max(needed, assignSum);
                 const weekElement = dom(`<div class="week project" id="proj_${project.id}_week_${week.id}" style="height:${pctScale(height)};"></div>`);
                 root.appendChild(weekElement);
 
-                const neededElement = dom(`<div class="soll" style="height:${pctScale(needed)};"></div>`);
+                const neededElement = dom(`<div class="soll" style="height:${pctScale(needed)};">${needed / 100} FTEs</div>`);
                 weekElement.appendChild(neededElement);
+
+                neededElement.onmousedown = evt => {
+                    dragIsOn = true;
+                    dragInfo = {
+                        avail: needed, // project needs so many FTEs this week
+                        availElement: neededElement, // the dom element representing needed
+                        weekElement: weekElement,
+                        availModel: fteModel,
+                        propname: 'fte',
+                        assignSum: assignSum, // sum of all assignments this week
+                    }
+                };
+
+                weekElement.ondrop = evt => {
+                    const data = evt.dataTransfer.getData("text/json");
+                    if(!data) return;
+                    const dragData = JSON.parse(data);
+                    if(dragData.devId == null) return;
+                    evt.preventDefault();
+                    evt.target.classList.remove("drop");
+                    const assignment = assignmentsThisWeek.find( it => it.devId  === dragData.devId );
+                    if (assignment) {
+                        // if we already have an assignment for this dev, this week, there is nothing to do
+                        return;
+                    }
+                    if (dragData.projId != null) {
+                        // it is not allowed to d&d between projects or weeks in the project view
+                        return;
+                    }
+                    assignments.push({
+                         week:      week.id,
+                         devId:     dragData.devId,
+                         projId:    project.id,
+                         amount:    100 // we could be more sophisticated here and find out the remaining availability
+                     });
+                    render();
+                };
+                weekElement.ondragover = evt => {
+                    evt.preventDefault(); // allow drop
+                    evt.target.classList.add("drop");
+                };
+                weekElement.ondragleave = evt => {
+                    evt.preventDefault(); // allow drop
+                    evt.target.classList.remove("drop");
+                };
 
                 assignmentsThisWeek.forEach(assignment => {
                     const assignElement = dom(
