@@ -8,16 +8,19 @@
             margin: 4rem;
             box-sizing: border-box;
             font-family: "Helvetica Neue", "sans-serif";
-            height: 100vh;
-            background-image: radial-gradient(farthest-corner at 20vw 12vh, white, rgba(127, 116, 205, 0.31));
-            background-repeat: no-repeat;
+            /*height: 100vh;*/
+            background-image:
+                    repeating-linear-gradient(rgba(127, 116, 205, 0.20), transparent 2vh, transparent 100%),
+                    repeating-radial-gradient(farthest-corner at 20vw 12vh, white, rgba(127, 116, 205, 0.31));
 
             --developer-color: #ffe6a5;
             --project-color:   #d1d7ee;
+            --hightlight-overlay: rgba(255, 255, 0, 0.6);
+            --drop-shadow:      0 .5em 0.5em lightgrey;
         }
         #topicsOverWeeks {
             display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: minmax(12em, 1.2fr) repeat(4, 1fr);
             grid-row-gap: 1em;
             grid-column-gap: .5em;
         }
@@ -25,29 +28,30 @@
             min-height: 3em;
             padding: .2em .5em .2em 50%;
             border-radius: 3em 0.5em 0.5em 3em;
-            position: relative;
-            display: flex;
+            display: flex; /* let the text flow to the right, vertical center */
             justify-content: flex-end;
             text-align: right;
             align-items: center;
         }
-        .topic.developer, .topic.project { /* all topics except header */
-        }
         .developer {
             background-color: var(--developer-color);
+        }
+        .project {
+            background-color: var(--project-color);
         }
         .topic.developer {
             background-repeat: no-repeat;
             background-size: 6em;
             background-position: left top;
             border: 4px solid var(--developer-color);
-            box-shadow: .3em 0 1px 0px var(--developer-color);
-        }
-        .project {
-            background-color: var(--project-color);
+            box-shadow: .3em 0 1px 0 var(--developer-color), var(--drop-shadow);
         }
         .topic.project {
-            box-shadow: .3em 0 1px 0px var(--project-color);
+            --pid-color: var(--project-color);
+            border: 4px solid var(--project-color);
+            background-image: linear-gradient(90deg, var(--pid-color),  var(--pid-color) 6em, transparent 6em);
+            background-blend-mode: color-burn;
+            box-shadow: .3em 0 1px 0 var(--project-color), var(--drop-shadow);
         }
         .week {
             border-radius: 0.5em;
@@ -58,11 +62,15 @@
             justify-content: flex-end;
         }
         .week.developer {
-            box-shadow: -.3em 0 1px 0px var(--developer-color), .3em 0 1px 0px var(--developer-color);
+            box-shadow: -.3em 0 1px 0px var(--developer-color),
+                         .3em 0 1px 0px var(--developer-color),
+                        var(--drop-shadow);
             background: var(--developer-color);
         }
         .week.project {
-            box-shadow: -.3em 0 1px 0px var(--project-color), .3em 0 1px 0px var(--project-color);
+            box-shadow: -.3em 0 1px 0px var(--project-color),
+                         .3em 0 1px 0px var(--project-color),
+                        var(--drop-shadow);
             background: var(--project-color);
         }
 
@@ -76,37 +84,47 @@
         }
         .assignment {
             border: 1px solid rgba(0, 0, 125, .1);
-            padding: 0.5em;
+            padding: 0.5em ;
             border-radius: 0.5em;
             box-shadow: inset 2px 2px .3em white, inset -2px -2px .2em gray;
             overflow: hidden;
         }
+        .assignment.project {
+            --pid-color: var(--project-color);
+            background-image: linear-gradient(90deg, var(--pid-color), var(--pid-color)  15%, transparent 15%);
+            background-blend-mode: color-burn;
+            padding: 0.5em 0.5em 0.5em 17%;
+        }
         .soll {
             z-index: 10;
-            background-color: yellow;
-            opacity: 0.4;
+            border: 1px solid black;
+            border-top-width: 2px;
+            border-radius: 0.5rem;
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            border-radius: 0.5rem;
-            pointer-events: none;
             user-input: none;
             user-select: none;
             text-align: center;
             font-size: 2em;
-            color: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
+            /* default, to be overridden when live: */
+            background-color: rgba(255, 255, 255, 0.4);
+            opacity: 0.5;
+            pointer-events: none;
+            color: transparent;
         }
-        .soll.live {
+        .soll.live { /* make sure to have higher specificity */
+            background-color: var(--hightlight-overlay);
             opacity: 0.7;
             pointer-events: auto;
             color: slateblue;
         }
         .week.developer.drop {
-            box-shadow: 0 0 1px .2em var(--project-color);
+            background-color: var(--hightlight-overlay);
         }
     </style>
 
@@ -183,8 +201,8 @@
         {week:3, devId:1, avail:0},
     ];
     const projects = [
-        {id:0, name: "Personal Einsatz Planung"},
-        {id:1, name: "Web Clients"},
+        {id:0, color: 'red',   name: "Personal Einsatz Planung"},
+        {id:1, color: 'green', name: "Web Clients"},
     ];
     const FTEs = [
         {week:0, projId:0, fte:100},
@@ -196,20 +214,54 @@
         { week:0, devId:0, projId:1, amount: 30},
     ];
 
+    const dom = innerString => {
+        const div = document.createElement("DIV");
+        div.innerHTML = innerString;
+        return div.firstChild;
+    };
 
+
+    const propSum = (propname, array) => array.reduce((accu, cur) => accu + cur[propname], 0);
+    const pctScale = pct => '' + pct + 'px';
+
+    let live = false;
+    let dragIsOn = false;
+    let dragInfo = null; // will be set on drag start
+
+    const finishDrag = evt => {
+        if (!dragIsOn) return;
+        dragInfo.availModel.avail =  5 * Math.round(dragInfo.avail / 5);
+        dragIsOn = false;
+        dragInfo = null;
+        render();
+    };
+    document.onkeydown = evt => {
+        if (!evt.altKey) {
+            return;
+        }
+        live = true;
+        document.querySelectorAll(".soll").forEach(el => el.classList.add("live"));
+    };
+    document.onkeyup = evt => {
+        if (!live) return;
+        live = false;
+        document.querySelectorAll(".soll").forEach(el => el.classList.remove("live"));
+        finishDrag();
+    };
+
+    document.onmousemove = evt => {
+        if (!dragIsOn) return;
+        dragInfo.avail -= evt.movementY;
+        dragInfo.avail = Math.max(0, dragInfo.avail);
+        dragInfo.availElement.style.height = pctScale(dragInfo.avail);
+        dragInfo.availElement.innerText = dragInfo.avail + " %";
+        dragInfo.weekElement.style.height = pctScale(Math.max(dragInfo.avail, dragInfo.assignSum));
+    };
+    document.onmouseup = finishDrag;
 
     const render = () => {
 
-        const dom = innerString => {
-            const div = document.createElement("DIV");
-            div.innerHTML = innerString;
-            return div.firstChild;
-        };
-
         const root = dom(`<div id="topicsOverWeeks">`);
-
-        const propSum = (propname, array) => array.reduce((accu, cur) => accu + cur[propname], 0);
-        const pctScale = pct => '' + pct + 'px';
 
         // render header
 
@@ -219,37 +271,18 @@
         });
 
         // render devs
-        let live = false;
-        let dragIsOn = false;
-        document.onkeydown = evt => {
-            if (!evt.altKey) {
-                return;
-            }
-            live = true;
-            document.querySelectorAll(".soll").forEach(el => {
-                el.classList.add("live");
-            });
-        };
-        document.onkeyup = evt => {
-            if (!live) return;
-            live = false;
-            dragIsOn = false;
-            root.querySelectorAll(".soll").forEach(el => {
-                el.classList.remove("live");
-            });
-        };
 
         devs.forEach(dev => {
             root.appendChild(dom(`<div class="topic developer" style="background-image:url(${dev.img})">${dev.name}</div>`));
             weeks.forEach(week => {
                 // actual height is maximum of the sum of all assignments in this week or the availability
                 const devThisWeek = it => it.week === week.id && it.devId === dev.id;
-                const availThisWeek = avails.find(devThisWeek);
-                let avail = availThisWeek ? availThisWeek.avail : 0;
+                const availModel = avails.find(devThisWeek);
+                const avail = availModel ? availModel.avail : 0;
                 const assignmentsThisWeek = assignments.filter(devThisWeek);
-                const sum = propSum('amount', assignmentsThisWeek);
-                const height = () => Math.max(avail, sum);
-                const weekElement = dom(`<div class="week developer" id="dev_${dev.id}_week_${week.id}" style="height:${pctScale(height())};"></div>`);
+                const assignSum = propSum('amount', assignmentsThisWeek);
+                const height = Math.max(avail, assignSum);
+                const weekElement = dom(`<div class="week developer" id="dev_${dev.id}_week_${week.id}" style="height:${pctScale(height)};"></div>`);
                 root.appendChild(weekElement);
 
                 const availElement = dom(`<div class="soll" style="height:${pctScale(avail)};">${avail} %</div>`);
@@ -257,22 +290,14 @@
 
                 availElement.onmousedown = evt => {
                     dragIsOn = true;
+                    dragInfo = {
+                        avail: avail, // dev is available so many % this week
+                        availElement: availElement, // the dom element representing avail
+                        weekElement: weekElement,
+                        availModel: availModel,
+                        assignSum: assignSum, // sum of all assignments this week
+                    }
                 };
-                availElement.onmousemove = evt => {
-                    if (!dragIsOn) return;
-                    avail -= evt.movementY;
-                    avail = Math.max(0, avail);
-                    availElement.style.height = pctScale(avail);
-                    availElement.innerText = avail + " %";
-                    weekElement.style.height = pctScale(height());
-                }
-                const finish = evt => {
-                    availThisWeek.avail = avail;
-                    dragIsOn = false;
-                    render(); // optional
-                };
-                availElement.onmouseup    = finish;
-                availElement.onmouseleave = finish;
 
                 weekElement.ondrop = evt => {
                     evt.preventDefault();
@@ -300,10 +325,13 @@
                 };
 
                 assignmentsThisWeek.forEach(assignment => {
+                    const project = projects.find(it => it.id === assignment.projId);
                     const assignElement = dom(
-                        `<div class="assignment project" draggable="true" style="height:${pctScale(assignment.amount)};">
-                        ${projects.find(it => it.id === assignment.projId).name}, ${assignment.amount}%
-                     </div>`
+                        `<div class="assignment project"
+                            draggable="true"
+                            style="height:${pctScale(assignment.amount)}; --pid-color:${project.color}">
+                                ${project.name}, ${assignment.amount}%
+                        </div>`
                     );
                     assignElement.ondragstart = evt => {
                         console.log("assignment drag", evt.target.id);
@@ -318,7 +346,7 @@
         // render projects
 
         projects.forEach(project => {
-            root.appendChild(dom(`<div class="topic project">${project.name}</div>`));
+            root.appendChild(dom(`<div class="topic project" style="--pid-color:${project.color}">${project.name}</div>`));
             weeks.forEach(week => {
                 // actual height is maximum of the sum of all assignments in this week or the needed FTEs
                 const projThisWeek = it => it.week === week.id && it.projId === project.id;
