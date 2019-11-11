@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<script>
+
+    // convenience functions
+    // get a random integer value between min and max with (min < max)
+    const random = (min,max) => Math.floor(Math.random()*(max-min+1)+min);
+
+
+    // Create a class for the element
+    class Square extends HTMLElement {
+      // Specify observed attributes so that
+      // attributeChangedCallback will work
+      static get observedAttributes() {return ['extend','fill-color']; }
+
+      constructor() {
+        // Always call super first in constructor
+        super();
+        const shadow = this.attachShadow({mode: 'open'});
+        const styleElement = document.createElement('style');
+        this.shadowStyle = styleElement;
+        shadow.appendChild(styleElement);
+        const shadowDiv = document.createElement('div');
+        shadow.appendChild(shadowDiv);
+      }
+
+      connectedCallback() {
+        console.log('Custom square element added.');
+        this.updateStyle();
+      }
+
+      disconnectedCallback() {
+        console.log('Custom square element removed.');
+      }
+
+      adoptedCallback() {
+        console.log('Custom square element moved to new page.');
+      }
+
+      attributeChangedCallback(name, oldValue, newValue) {
+        console.log('Custom square element attributes changed.');
+        this.updateStyle();
+      }
+
+      // updating the style for changes of "extend" or "fill-color" attributes
+      updateStyle() {
+        this.shadowStyle.textContent =
+            'div {' +
+              ' width: '            + this.getAttribute('extend') + 'px;' +
+              ' height: '           + this.getAttribute('extend') + 'px;' +
+              ' background-color: ' + this.getAttribute('fill-color') + ';'   +
+            ' }';
+      }
+    }
+
+    customElements.define('custom-square', Square);
+
+</script>
+
+
+<p>Use of web component as html element </p>
+<script>
+    function onCustomUpdate(elem) {
+        elem.setAttribute('extend',random(50,200));
+        elem.setAttribute('fill-color','rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) + ')');
+    }
+</script>
+
+<custom-square extend="100" fill-color="black" onclick="onCustomUpdate(this)">
+</custom-square>
+
+
+<p>Use of web component when added dynamically</p>
+
+<div class="add"   >add</div>
+<div class="update">update</div>
+<div class="remove">remove</div>
+
+<script>
+
+    const add    = document.querySelector('.add');
+    const update = document.querySelector('.update');
+    const remove = document.querySelector('.remove');
+    let   square = null;
+
+    update.disabled = true;
+    remove.disabled = true;
+
+
+    add.onclick = function() {
+      // Create a custom square element
+      square = document.createElement('custom-square');
+      square.setAttribute('extend','100');
+      square.setAttribute('fill-color','red');
+      document.body.appendChild(square);
+
+      update.disabled = false;
+      remove.disabled = false;
+      add.disabled    = true;
+    };
+
+    update.onclick = function() {
+      // Randomly update square's attributes
+      square.setAttribute('extend',random(50,200));
+      square.setAttribute('fill-color','rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) + ')');
+    };
+
+    remove.onclick = function() {
+      // Remove the square
+      document.body.removeChild(square);
+
+      update.disabled = true;
+      remove.disabled = true;
+      add.disabled    = false;
+    };
+</script>
+
+
+</body>
+</html>
