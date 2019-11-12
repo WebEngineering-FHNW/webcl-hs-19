@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View</title>
+
+    <style>
+        body {
+            margin: 4rem;
+            box-sizing: border-box;
+            width:  100%;
+            height: 100%;
+            background-color: black;
+        }
+        main {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #signature {
+            width:  60vw;
+            height: 50vh;
+        }
+        svg {
+            width:  100%; /* try to fill the container but keep aspect ratio */
+            height: 100%;
+            filter: drop-shadow(0px 0px 1em cyan);
+        }
+        svg path {
+            stroke-width: 3px;
+            stroke-opacity: 1;
+            stroke-linecap: round;
+            stroke: cyan;
+        }
+        .anim {
+            transform: rotate(20deg) scaleX(2);
+            transition: transform ease-out 2.5s;
+            transition-delay: .5s;
+        }
+
+    </style>
+</head>
+<body>
+
+<main>
+    <div id="signature" onclick="this.className='anim';signature();">
+
+        <svg viewBox="0 -2 43 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path id="path0" d="M18 12V45" stroke="black"/>
+            <path id="path1" d="M35 4C35 4 19.5 24 19.5 28.5C19.5 33 38.5 56 38.5 56" stroke="black"/>
+            <path id="path2"
+                  d="M1.00002 14C2.24347 7.31013 30 13 9.00002 2C21.2046 -0.449153 26.0539 2.28554 33 8.5C45 19.236 44.5 43 33 52.5C21.5 62 14 55 6.99999 54"
+                  stroke="black"/>
+        </svg>
+
+
+    </div>
+</main>
+
+<script>
+
+    const linear = x => x;
+
+    const animate = (tweening, millisecs, callback, onDone) => {
+        let start = null;
+        function paint(timestamp) {
+          if (!start) start = timestamp;
+          const progress = timestamp - start;
+          const fraction = progress / millisecs;
+          const value    = tweening(fraction);
+          callback(value);
+          if (progress < millisecs) {
+            window.requestAnimationFrame(paint);
+          } else {
+            callback(1);
+            if (onDone) onDone();
+          }
+        }
+        callback(0);
+        window.requestAnimationFrame(paint);
+    };
+
+    const pathInfo = [
+        { path: path0 },
+        { path: path1 },
+        { path: path2 },
+    ];
+    pathInfo.forEach( it => {
+        it.total = it.path.getTotalLength();
+        it.path.style['stroke-dasharray']  = it.total; // dash with full length, followed by equal empty space
+        it.path.style['stroke-dashoffset'] = it.total; // show the empty space
+
+    });
+
+    const animateStroke = n => fraction => {
+        const total = pathInfo[n].total;
+        pathInfo[n].path.style['stroke-dashoffset'] = total * (1-fraction);
+    };
+
+
+    const signature = () => {
+        animate(linear, 500, animateStroke(0),
+            () => animate(linear, 1500, animateStroke(2),
+                () => animate(linear, 1000, animateStroke(1))
+    )   )   };
+
+</script>
+
+</body>
+</html>
