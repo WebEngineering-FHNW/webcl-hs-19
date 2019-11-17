@@ -58,3 +58,8 @@ Note that todo items are not yet created:
 - Custom square element with programmable color, size and onclick-action and how it is used in html
 [Custom element](https://webengineering-fhnw.github.io/webcl-hs-19/week9/custom-elements/CustomElement.html)
 
+## week 10
+Student submissions:
+- [Angular Gauge](https://github.com/Chiirali/angular-gauge)
+- [Svelte SVG](https://github.com/gobeli/webcl-svg)
+
