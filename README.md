@@ -64,4 +64,5 @@ Student submissions:
 - [Svelte SVG](https://github.com/gobeli/webcl-svg)
 - [React Eye SVG](https://github.com/knnhcn/react-eye-svg)
 - [React Gauge](https://github.com/peerjuettner/react-gauge)
+- [Vue PigEyes](https://codesandbox.io/s/vue-template-4ehxh)
 
