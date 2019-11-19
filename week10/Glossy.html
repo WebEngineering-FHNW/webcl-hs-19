@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        :root {
+            margin:     0;
+            padding:    0;
+            box-sizing: border-box;
+            font-family: "Helvetica Neue", "sans-serif";
+        }
+
+        main {
+            background-color: lightgrey;
+        }
+
+        button {
+            color: lightgrey;
+        }
+
+        .portrait {
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            background: darkblue;
+            padding: 4em 1em 4em 1em;
+            border-radius: .5em;
+        }
+
+        .landscape {
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            background: darkred;
+            padding: 1em 3em 1em 3em;
+            border-radius: .5em;
+        }
+
+
+        .port {
+            --glossy-stretch: 600%;
+        }
+        .land {
+            --glossy-stretch: 300%;
+        }
+
+        .glossy {
+            /* assume we have display: block; or inline-block*/
+            position:relative;
+        }
+        .glossy::before {
+            content: ' ';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            background-image: radial-gradient(circle at 100% 100%, transparent 0%, transparent 90%, white 90%, white 100%);
+            top: 0;
+            left: 0;
+            opacity: .3;
+            background-size: var(--glossy-stretch, 600%) 200%;
+        }
+
+    </style>
+</head>
+<body>
+
+
+<main>
+        <button class="portrait  glossy"      >Default</button>
+        <button class="portrait  glossy port" >Glossy</button>
+        <button class="portrait  glossy"      >Ugly Glossy Button</button>
+        <button class="portrait  glossy land" >Land Glossy Button</button>
+        <button class="landscape glossy land" >Landscape</button>
+
+</main>
+
+
+
+</body>
+
+</html>

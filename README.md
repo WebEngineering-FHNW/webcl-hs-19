@@ -62,4 +62,5 @@ Note that todo items are not yet created:
 Student submissions:
 - [Angular Gauge](https://github.com/Chiirali/angular-gauge)
 - [Svelte SVG](https://github.com/gobeli/webcl-svg)
+- [React Eye SVG](https://github.com/knnhcn/react-eye-svg)
 
