@@ -60,7 +60,8 @@ Note that todo items are not yet created:
 
 ## week 10
 Student submissions:
-- [Angular Gauge](https://github.com/Chiirali/angular-gauge)
+- [Angular Bucket](https://github.com/Chiirali/angular-bucket)
 - [Svelte SVG](https://github.com/gobeli/webcl-svg)
 - [React Eye SVG](https://github.com/knnhcn/react-eye-svg)
+- [React Gauge](https://github.com/peerjuettner/react-gauge)
 
