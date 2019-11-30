@@ -1,4 +1,5 @@
 
+import { dom } from "../util/dom.js"
 export { start } ;
 
 
@@ -40,12 +41,6 @@ const start = (appRootId, devs) => {
         { week:0, devId:0, projId:0, amount: 70},
         { week:0, devId:0, projId:1, amount: 30},
     ];
-
-    const dom = innerString => {
-        const div = document.createElement("DIV");
-        div.innerHTML = innerString;
-        return div.firstChild;
-    };
 
 
     const propSum = (propname, array) => array.reduce((accu, cur) => accu + cur[propname], 0);
