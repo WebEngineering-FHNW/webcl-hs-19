@@ -1,5 +1,8 @@
 
 import { dom } from "../util/dom.js"
+import {registerForMouseDrag, mouseDragStarter, startDnD} from "./mouseDrag.js";
+import { propSum, pctScale, showDroppable} from "./helper.js";
+
 export { start } ;
 
 
@@ -42,50 +45,6 @@ const start = (appRootId, devs) => {
         { week:0, devId:0, projId:1, amount: 30},
     ];
 
-
-    const propSum = (propname, array) => array.reduce((accu, cur) => accu + cur[propname], 0);
-    const pctScale = pct => '' + pct + 'px';
-
-    let dragIsOn = false;
-    let dragInfo = null; // will be set on drag start
-
-    const finishDrag = evt => {
-        if (!dragIsOn) return;
-        dragIsOn = false;
-        if (dragInfo) dragInfo.presModel[dragInfo.propertyName] =  5 * Math.round(dragInfo.movingValue / 5);
-        dragInfo = null;
-        // as long as we do re-rendering, this is not needed since render set's the initial defaults back
-        // document.querySelectorAll(".soll").forEach(el => el.classList.remove("live"));
-        // document.querySelectorAll(".assignment").forEach(el => el.setAttribute('draggable','true'));
-        render();
-    };
-    document.onkeydown = evt => {
-        if (evt.shiftKey) {
-            document.querySelectorAll(".assignment").forEach(el => el.setAttribute('draggable','false'));
-            dragIsOn = true;
-            return;
-        }
-        if (evt.altKey) {
-            document.querySelectorAll(".soll").forEach(el => el.classList.add("live"));
-            dragIsOn = true;
-            return;
-        }
-    };
-    document.onkeyup = evt => {
-        finishDrag();
-    };
-
-    document.onmousemove = evt => {
-        if (!dragIsOn) return;
-        if (!dragInfo) return;
-        dragInfo.movingValue -= evt.movementY;
-        dragInfo.movingValue = Math.max(0, dragInfo.movingValue);
-        dragInfo.highlightElement.style.height = pctScale(dragInfo.movingValue);
-        dragInfo.highlightElement.innerText = dragInfo.movingValue + " %";
-        dragInfo.spaceElement.style.height = dragInfo.highlightElement.style.height;
-    };
-    document.onmouseup = finishDrag;
-
     const render = () => {
 
         // clean zero-assignments
@@ -126,16 +85,13 @@ const start = (appRootId, devs) => {
                 const availElement = dom(`<div class="soll" style="height:${pctScale(avail)};">${avail} %</div>`);
                 weekElement.appendChild(availElement);
 
-                availElement.onmousedown = evt => {
-                    if (! dragIsOn) return;
-                    dragInfo = {
-                        movingValue: avail, // dev is available so many % this week
-                        highlightElement: availElement, // the dom element representing avail
-                        spaceElement: weekElement,
-                        presModel: availModel,
-                        propertyName: 'avail',
-                    };
-                };
+                availElement.onmousedown = mouseDragStarter({
+                    movingValue:        avail,              // dev is available so many % this week
+                    highlightElement:   availElement,       // the dom element representing avail
+                    spaceElement:       weekElement,
+                    presModel:          availModel,
+                    propertyName:       'avail',
+                });
 
                 weekElement.ondrop = evt => {
                     const data = evt.dataTransfer.getData("text/json");
@@ -155,14 +111,7 @@ const start = (appRootId, devs) => {
                         render();
                     }
                 };
-                weekElement.ondragover = evt => {
-                    evt.preventDefault(); // allow drop
-                    evt.target.classList.add("drop");
-                };
-                weekElement.ondragleave = evt => {
-                    evt.preventDefault(); // allow drop
-                    evt.target.classList.remove("drop");
-                };
+                showDroppable(weekElement);
 
                 assignmentsThisWeek.forEach(assignment => {
                     const project = projects.find(it => it.id === assignment.projId);
@@ -174,20 +123,17 @@ const start = (appRootId, devs) => {
                         </div>`
                     );
                     assignElement.ondragstart = evt => {
-                        dragIsOn = false;
+                        startDnD();
                         evt.dataTransfer.setData("text/json", JSON.stringify(assignment))
                     };
 
-                    assignElement.onmousedown = evt => {
-                        if (!dragIsOn) return;
-                        dragInfo = {
-                            movingValue: assignment.amount, // dev is available so many % this week
-                            highlightElement: assignElement, // the dom element representing avail
-                            spaceElement: weekElement,
-                            presModel: assignment,
-                            propertyName: 'amount',
-                        }
-                    };
+                    assignElement.onmousedown = mouseDragStarter({
+                        movingValue:        assignment.amount,  // dev is available so many % this week
+                        highlightElement:   assignElement,      // the dom element representing avail
+                        spaceElement:       weekElement,
+                        presModel:          assignment,
+                        propertyName:       'amount',
+                    });
                     weekElement.appendChild(assignElement);
                 })
             });
@@ -211,16 +157,13 @@ const start = (appRootId, devs) => {
                 const neededElement = dom(`<div class="soll" style="height:${pctScale(needed)};">${needed / 100} FTEs</div>`);
                 weekElement.appendChild(neededElement);
 
-                neededElement.onmousedown = evt => {
-                    if (!dragIsOn) return;
-                    dragInfo = {
-                        movingValue: needed, // project needs so many FTEs this week
-                        highlightElement: neededElement, // the dom element representing needed
-                        spaceElement: weekElement,
-                        presModel: fteModel,
-                        propertyName: 'fte',
-                    }
-                };
+                neededElement.onmousedown = mouseDragStarter({
+                    movingValue:        needed,         // project needs so many FTEs this week
+                    highlightElement:   neededElement,  // the dom element representing needed
+                    spaceElement:       weekElement,
+                    presModel:          fteModel,
+                    propertyName:       'fte',
+                });
 
                 weekElement.ondrop = evt => {
                     const data = evt.dataTransfer.getData("text/json");
@@ -246,14 +189,7 @@ const start = (appRootId, devs) => {
                      });
                     render();
                 };
-                weekElement.ondragover = evt => {
-                    evt.preventDefault(); // allow drop
-                    evt.target.classList.add("drop");
-                };
-                weekElement.ondragleave = evt => {
-                    evt.preventDefault(); // allow drop
-                    evt.target.classList.remove("drop");
-                };
+                showDroppable(weekElement);
 
                 assignmentsThisWeek.forEach(assignment => {
                     const assignElement = dom(
@@ -268,7 +204,9 @@ const start = (appRootId, devs) => {
 
         const topicsOverWeeks = document.getElementById(appRootId);
         topicsOverWeeks.replaceWith(root);
-    }
+    };
+
+    registerForMouseDrag( render );
 
     render();
 };
