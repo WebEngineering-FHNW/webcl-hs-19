@@ -9,3 +9,4 @@ import './church/rockTest.js'
 
 import './pep/service/localServiceTest.js'
 import './pep/service/jsonToModelTest.js'
+import './pep/pepControllerTest.js'
