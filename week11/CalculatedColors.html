@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        :root {
+            margin:     0;
+            padding:    0;
+            box-sizing: border-box;
+            font-family: "Helvetica Neue", "sans-serif";
+        }
+
+
+        section {
+            clear:both;
+        }
+
+        .colored {
+            --color-background-base: orange;
+            float: left;
+            width: 10em;
+            height: 10em;
+            border: 1px solid black;
+            margin: 0 1em 1em 1em;
+            background-color: transparent;
+            position: relative;
+        }
+        .colored::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; height: inherit; width: inherit;
+            background-color: var(--color-background-base);
+            z-index: -1;
+        }
+
+        .colored.complement::before {
+            filter: hue-rotate(180deg);
+        }
+
+        /* ---------------------------- */
+
+        .content {
+            float: left;
+            width: 10em;
+            height: 10em;
+            border: 1px solid black;
+            margin: 0 1em 1em 1em;
+            background-color: transparent;
+            position: relative;
+        }
+
+        .backdrop {
+            position: absolute;
+            top: 0; left: 0; height: inherit; width: inherit;
+            background-color: orange;
+            z-index: -1; /* get it off the stacking context */
+        }
+
+        .backdrop.complement {
+            filter: hue-rotate(180deg);
+        }
+        .backdrop.desaturated {
+            filter: saturate(20%);
+        }
+        .backdrop.bright {
+            filter: brightness(500%);
+        }
+
+        .backdrop.mercedes-1 {
+            filter: hue-rotate(135deg);
+        }
+
+        .backdrop.mercedes-2 {
+            filter: hue-rotate(225deg);
+        }
+
+        .backdrop.split-1 {
+            filter: hue-rotate(160deg);
+        }
+
+        .backdrop.split-2 {
+            filter: hue-rotate(200deg);
+        }
+
+        .backdrop.nearby-1 {
+            filter: hue-rotate(-30deg);
+        }
+
+        .backdrop.nearby-2 {
+            filter: hue-rotate(30deg);
+        }
+
+
+    </style>
+</head>
+<body>
+
+
+<main>
+
+    <section>
+        <h2>Using ::before and var</h2>
+        <p>Does not allow setting the var dynamically. Must change in code.</p>
+        <div class="colored original">
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+        <div class="colored complement">
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+    </section>
+
+    <section>
+        Base Color: <input id="colorinput" type="text" value="">
+    </section>
+
+    <section>
+
+        <h2>Original, Complement, Desaturated, Bright.</h2>
+
+        <div class="content">
+            <div class="backdrop original"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. Original.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+
+        <div class="content">
+            <div class="backdrop complement"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. Complement. </span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+        <div class="content">
+            <div class="backdrop desaturated"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. Desaturated.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+        <div class="content">
+            <div class="backdrop bright"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. Bright. </span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <h2>Original, Triadic 135, 225 </h2>
+
+        <div class="content">
+            <div class="backdrop original"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. Original.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+
+        <div class="content">
+            <div class="backdrop mercedes-1"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. 135. </span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+        <div class="content">
+            <div class="backdrop mercedes-2"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. 225.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <h2>Original, Split 160, 200 </h2>
+
+        <div class="content">
+            <div class="backdrop original"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. Original.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+
+        <div class="content">
+            <div class="backdrop split-1"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. 160. </span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+        <div class="content">
+            <div class="backdrop split-2"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. 200.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <h2>Original, Nearby -30, 30 </h2>
+
+        <div class="content">
+            <div class="backdrop original"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. Original.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+
+        <div class="content">
+            <div class="backdrop nearby-1"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. -30. </span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+        <div class="content">
+            <div class="backdrop nearby-2"></div>
+            <span style="color:black">Ein scharzer Text.</span>
+            <span style="color:white">Ein weisser Text. 30.</span>
+            <span style="color:red">Ein roter Text.</span>
+            <span style="color:blue">Ein blauer Text.</span>
+        </div>
+
+    </section>
+    
+
+</main>
+
+
+
+<script>
+    colorinput.onchange = evt => {
+        document.querySelectorAll('.backdrop').forEach( elem => {
+            elem.style['background-color'] = colorinput.value;
+        })
+    }
+</script>
+
+
+</body>
+
+</html>
