@@ -11,5 +11,5 @@ import "../domainDoc.js"
 /**
  * Common interface for all services (abstract factory pattern)
  *
- * @typedef {{loadDevelopers: onDevelopersReadyCallback}} PepService
+ * @typedef {{loadDevelopers: (function(onDevelopersReadyCallback): undefined)}} PepService
  * */
