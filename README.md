@@ -66,3 +66,6 @@ Student submissions:
 - [React Gauge](https://github.com/peerjuettner/react-gauge)
 - [Vue PigEyes](https://codesandbox.io/s/vue-template-4ehxh)
 
+## week 11
+- Grails Backendserver for the pep personnel planning tool with example client (https://github.com/WebEngineering-FHNW/webcl-hs19-server)
+- Pep client app uses fetch api to connect to backend (https://github.com/WebEngineering-FHNW/webcl-hs19-server/tree/restify)
