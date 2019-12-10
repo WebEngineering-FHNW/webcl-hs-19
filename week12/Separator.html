@@ -12,6 +12,36 @@
             font-family: "Helvetica Neue", "sans-serif";
         }
 
+        .separator {
+            display: grid;
+            grid-template-columns: auto max-content auto;
+            grid-column-gap: .5em;
+
+            /* chrome, ff, not on safari*/
+            /*background: linear-gradient(black 50%, lightcyan);*/
+            /*-webkit-background-clip: text;*/
+            /*-webkit-text-fill-color: transparent;*/
+        }
+
+        .separator::before, .separator::after {
+            content: " ";
+            background-image: linear-gradient(transparent 47%, blue 47%, blue 47%, transparent 53% );
+
+            /* drop shadow on clip works in safari only */
+            /* it appears this due to the sequence of filtering/clipping */
+            filter: drop-shadow(0 0 2px cyan);
+        }
+        .separator::before {
+
+            /* chrome, ff, not on safari*/
+            /*background-image: linear-gradient(90deg, blue 60%, black );*/
+            /*clip-path: polygon(0% 50%, calc(100% - .5em) 45%, calc(100% - .5em) 55%);*/
+
+        }
+        .separator::after {
+            /*background-image: linear-gradient(90deg, black, blue 40%);*/
+            /*clip-path: polygon( .5em 45%,  100% 50%, .5em 55%);*/
+        }
 
 
     </style>
@@ -21,11 +51,13 @@
 
 <main>
 
-    <p>Some text.</p>
+    <p>Layouting pseudo elements like flex/grid children works in all major browsers.</p>
+    <p>There are a number of things that you cannot in a pseudo element, e.g. using "em".</p>
     <h1 class="separator">Section  separator</h1>
-    <p>Some text.</p>
+    <p>Clip path on pseudo elements work in chrome and firefox but not in safari.</p>
     <h2 class="separator">Section  separator </h2>
-    <p>Some text.</p>
+    <p>Selective filters on pseudo elements works in safari but not in chrome and firefox.
+    </p>
 
 </main>
 
