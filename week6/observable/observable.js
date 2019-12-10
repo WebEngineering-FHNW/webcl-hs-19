@@ -5,7 +5,7 @@ const Observable = value => {
     const listeners = [];
     return {
         onChange: callback => {
-            if(listeners.length > 1) { listeners.pop(); } // this is very limiting (but resolves the memory leak)
+            if(listeners.length > 3) { listeners.pop(); } // this is very limiting (but resolves the memory leak)
             listeners.push(callback);
             // console.log(listeners.length);
             callback(value, value);
