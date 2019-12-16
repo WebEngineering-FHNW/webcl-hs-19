@@ -21,7 +21,7 @@ const Person = () => {                               // facade
     const lastnameAttr  = Attribute("Mustermann", `Person.${id}.lastname`);
     lastnameAttr.getObs(LABEL).setValue("Last Name");
 
-    // lastnameAttr.setConverter( input => input.toUpperCase() );
+    // lastnameAttr.setConverter( input => input.toUpperCase() );  // enable for playing around
     // lastnameAttr.setValidator( input => input.length >= 3   );
 
     return {
@@ -41,6 +41,8 @@ const MasterView = (listController, selectionController, rootElement) => {
     listController.onModelAdd(render);
     listController.onModelRemove( (removedModel, removeMe) => {
         removeListItemForModel(ALL_ATTRIBUTE_NAMES)(removedModel);
+        removedModel.firstname.setQualifier(undefined); // remove model attributes from model world
+        removedModel.lastname.setQualifier(undefined);  // this could become more convenient
         selectionController.clearSelection();
     });
     selectionController.onModelSelected(selectListItemForModel(ALL_ATTRIBUTE_NAMES));

@@ -46,7 +46,9 @@ const ModelWorld = () => {
                 if (foundIndex > -1) {
                     oldCandidates.splice(foundIndex, 1);
                 }
-                // todo: we might wand to delete empty candidates here
+                if (oldCandidates.length === 0) { // delete empty candidates here
+                    delete data[oldKey];
+                }
             }
             if (null != newQualifier){
                 // add to new candidates
