@@ -69,3 +69,9 @@ Student submissions:
 ## week 11
 - Grails Backendserver for the pep personnel planning tool with example client (https://github.com/WebEngineering-FHNW/webcl-hs19-server)
 - Pep client app uses fetch api to connect to backend (https://github.com/WebEngineering-FHNW/webcl-hs19-server/tree/restify)
+
+## week 12
+tbd
+
+## week 13
+- [Server Push Alternatives](https://github.com/gobeli/webcl-server-push)
