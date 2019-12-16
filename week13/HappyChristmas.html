@@ -23,7 +23,7 @@
             left: 0;
             width: 100%;
             height: calc(100vh - 60%);
-            background: linear-gradient(whitesmoke, lightcyan);
+            background: linear-gradient(white, lightcyan 30%, powderblue);
         }
         main {
             width: 100%;
@@ -47,7 +47,8 @@
             width: 100%;
             height: 100px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.1);
+            background: rgba(0,0,180,0.1);
+            mix-blend-mode: multiply;
         }
         .tree::after { /*the trunk*/
             content: '';
@@ -55,7 +56,7 @@
             bottom: -40px;
             left: 50%;
             width: 60px;
-            height: 40px;
+            height: 170px;
             transform: translateX(-50%);
             background: brown;
         }
@@ -64,24 +65,24 @@
             position: absolute;
             width: 100%;
             height: 200px;
-            bottom: 0;
+            bottom: 0px;
             display: flex;
+            z-index: 1;
         }
         .tree div:nth-child(2) {  /* tree branches level 2 */
             transform: translateY(-100px) scale(0.8);
-            z-index: 1;
         }
         .tree div:nth-child(3) {  /* tree branches level 3 */
             transform: translateY(-175px) scale(0.6);
-            z-index: 1;
         }
         .tree div:nth-child(4) {  /* tree branches level 4 */
             transform: translateY(-235px) scale(0.4);
-            z-index: 1;
         }
         .tree div:nth-child(5) {  /* tree branches level 5 */
             transform: translateY(-280px) scale(0.25);
-            z-index: 1;
+        }
+        .tree div span.start {
+            transform: translateY(100vh);
         }
         .tree div span {
             position: relative;
@@ -89,6 +90,8 @@
             height: 100%;
             display: block;
             overflow: hidden;
+            z-index: 1;
+            transition: transform 2s ease-out;
         }
         .tree div span:nth-child(1)::before { /*left branch*/
             content: '';
@@ -124,13 +127,11 @@
             width: 100%;
             height: 100vh;
             z-index: 2;
-            /*background: rgba(255,255,255,.5);*/
         }
         #snow .flake {
             position: relative;
             border-radius: 50%;
-            background: snow;
-            border: 1px solid lightblue;
+            background: radial-gradient(circle at 30% 30%, snow, powderblue);
             animation-name: fall;
             animation-timing-function: linear;
             animation-direction: normal;
@@ -138,7 +139,7 @@
         }
         @keyframes fall {
             0% {
-                transform: translateY(0);
+                transform: translateY(-100vh);
             }
             100% {
                 transform: translateY(100vh);
@@ -147,8 +148,8 @@
 
     </style>
 </head>
-<body>
 
+<body onload="start();">
 
 <div id="snow">
 </div>
@@ -157,43 +158,45 @@
 
     <div class="tree">
         <div>
-            <span></span>
-            <span></span>
+            <span class="start"></span>
+            <span class="start"></span>
         </div>
-
         <div>
-            <span></span>
-            <span></span>
+            <span class="start"></span>
+            <span class="start"></span>
         </div>
-
         <div>
-            <span></span>
-            <span></span>
+            <span class="start"></span>
+            <span class="start"></span>
         </div>
-
         <div>
-            <span></span>
-            <span></span>
+            <span class="start"></span>
+            <span class="start"></span>
         </div>
-
         <div>
-            <span></span>
-            <span></span>
+            <span class="start"></span>
+            <span class="start"></span>
         </div>
 
     </div>
 
 </main>
 
+<p style="position:fixed; bottom: 0; right: 50px; color: gray; z-index: 3;">
+    Inspiration from <a style="color: gray;" href="https://www.youtube.com/watch?v=oXMC5IeaXXs&t=188s">
+    Online Tutorials
+</a></p>
 
 <script>
 
-    const makeFlake = _ => ({left: Math.random() * 100, top: (Math.random() - 0.5) * 200} );
-    const fast   = Array.from( {length:  8}, makeFlake);
-    const middle = Array.from( {length: 10}, makeFlake);
-    const slow   = Array.from( {length: 50}, makeFlake);
+    const start = () => document.querySelectorAll(".start").forEach(span => span.classList.remove("start"));
 
-    const register = (flakes, size, animationDuration) => {
+    const makeFlake = _ => ({left: Math.random() * 100, top: (Math.random()) * 100} );
+    const fast   = Array.from( {length:  4}, makeFlake);
+    const middle = Array.from( {length: 10}, makeFlake);
+    const slow   = Array.from( {length: 40}, makeFlake);
+
+    const register = (flakes, size, animationSeconds) => {
         flakes.forEach( flakeModel => {
             const flake = document.createElement("DIV");
             flake.classList.add("flake");
@@ -201,13 +204,13 @@
             flake.style.top    = flakeModel.top  + "%";
             flake.style.width  = size;
             flake.style.height = size;
-            flake.style['animation-duration'] = (Math.random() + 0.5) * animationDuration + "s";
+            flake.style['animation-duration'] = (Math.random() + 0.5) * animationSeconds + "s";
             snow.appendChild(flake);
         } );
     };
-    register(fast,   "25px", 3);
-    register(middle, "18px", 5);
-    register(slow,   "12px", 8);
+    register(fast,   "25px", 5);
+    register(middle, "18px", 8);
+    register(slow,   "12px", 10);
 
 
 </script>
