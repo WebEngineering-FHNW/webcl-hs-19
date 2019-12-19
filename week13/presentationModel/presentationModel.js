@@ -101,8 +101,15 @@ const Attribute = (value, qualifier) => {
     };
     const setConvertedValue = val => getObs(VALUE).setValue(convert(val));
 
-    // todo: this might set many validators without discharging old ones
-    const setValidator = validate => getObs(VALUE).onChange( val => getObs(VALID).setValue(validate(val)));
+    let validator        = undefined;  // the current validator in use, might change over time
+    let validateListener = undefined;  // the validate listener on the attribute, lazily initialized
+    const setValidator = newValidator => {
+        validator = newValidator;
+        if (! validateListener && validator) {
+            validateListener = val => getObs(VALID).setValue(validator ? validator(val) : true);
+            getObs(VALUE).onChange( validateListener );
+        }
+    };
 
     return { getObs, hasObs, setValidator, setConverter, setConvertedValue, getQualifier, setQualifier }
 };
