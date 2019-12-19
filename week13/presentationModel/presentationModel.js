@@ -32,39 +32,34 @@ const ModelWorld = () => {
            }
         });
         if (! found) {
-            candidates.push(observable);
+            candidates.push(observable); // lazy init: we should have been in the list
         }
     };
     const updateQualifier = (qualifier, newQualifier, observables) => {
         for (let name in observables) {
             const observable = observables[name];
-            if (null != qualifier) {
-                // remove qualifier from old candidates
+            if (null != qualifier) {                    // remove qualifier from old candidates
                 const oldKey = qualifier + "." + name;
                 const oldCandidates = data[oldKey];
                 const foundIndex = oldCandidates.indexOf(observable);
                 if (foundIndex > -1) {
                     oldCandidates.splice(foundIndex, 1);
                 }
-                if (oldCandidates.length === 0) { // delete empty candidates here
+                if (oldCandidates.length === 0) {       // delete empty candidates here
                     delete data[oldKey];
                 }
             }
-            if (null != newQualifier){
-                // add to new candidates
+            if (null != newQualifier){                  // add to new candidates
                 const newKey = newQualifier + "." + name;
                 let newCandidates = data[newKey];
                 if (null == newCandidates) {
                     newCandidates = data[newKey] = [];
                 }
+                if (newCandidates.length > 0) {         // there are existing observables that's values we need to take over
+                    observable.setValue(newCandidates[0].getValue());
+                }
                 newCandidates.push(observable);
             }
-        }
-        // after the structure is set, we trigger all updates to keep the values consistent
-        // We do this in a second pass to deal more consistently with converters and validators.
-        for (let name in observables) {
-            const observable = observables[name];
-            update( () => newQualifier, name, observable);
         }
     };
     return { update, updateQualifier }
@@ -77,9 +72,10 @@ const Attribute = (value, qualifier) => {
     const observables = {}; // name -> observable
 
     const getQualifier = () => qualifier;
-    const setQualifier = newQualifier => { // todo: needs to update the model world indexes for all obs (key: qualifier + name)
-        modelWorld.updateQualifier(qualifier, newQualifier, observables);
-        qualifier = newQualifier;
+    const setQualifier = newQualifier => {
+        const oldQualifier = qualifier;     // store for use in updateQualifier, since that needs the value to properly unregister
+        qualifier = newQualifier;           // since updateQualifier sets the qualifier and calls the attribute back to read it, it must have the new value
+        modelWorld.updateQualifier(oldQualifier, qualifier, observables);
     };
 
     const hasObs = name => observables.hasOwnProperty(name);
