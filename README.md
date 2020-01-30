@@ -87,3 +87,7 @@ Student submissions:
 - Stable binding in PEP client with view-specific Presentation Models
 - Assignment-views of developers in projects are kept in sync as defined by the ModelWorld rule #1
 [Pep client](https://webengineering-fhnw.github.io/webcl-hs-19/week14/pep/pep.html)
+
+## week 15
+- [CSS alternative](https://github.com/InnigerM/webcl-hs-19/blob/master/week14/pep/pepStyle.css)
+- Finishing the collaboration story
