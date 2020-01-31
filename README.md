@@ -91,3 +91,6 @@ Student submissions:
 ## week 15
 - [CSS alternative](https://github.com/InnigerM/webcl-hs-19/blob/master/week14/pep/pepStyle.css)
 - Finishing the collaboration story
+- [Pep client](https://webengineering-fhnw.github.io/webcl-hs-19/week14/pep/pep.html)
+- [Alternative Pep client](https://webengineering-fhnw.github.io/webcl-hs-19/week14/pep/pep2.html)
+

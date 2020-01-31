@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="pepLocalStarter.js" type="module"></script>
+  <title>Personal Einsatz Planung</title>
+  <style>
+      body {
+          margin: 4rem;
+          box-sizing: border-box;
+          font-family: "Arial", "sans-serif";
+          height: 100vh;
+          user-select: none; /* avoid text selection when dragging over text */
+          /* image was loaded from https://marketplace.canva.com/MADesCiqolw/1/thumbnail_large/canva-4k-low-poly-background-MADesCiqolw.jpg */
+          background-image: url("./img/background2.jpg");
+          background-size: cover;
+          background-repeat: no-repeat;
+          --developer-color: #38001d;
+          --project-color: #223e86;
+          --hightlight-overlay: #f58d0f;
+          --drop-shadow: 0 .5em 0.5em #D4D4D4;
+      }
+
+      #topicsOverWeeks {
+          display: grid;
+          grid-template-columns: minmax(12em, 1.2fr) repeat(4, 1fr);
+          grid-row-gap: 1em;
+          grid-column-gap: .5em;
+      }
+
+      .topic {
+          min-height: 3em;
+          padding: .2em .5em .2em 50%;
+          border-radius: 3em 0.5em 0.5em 3em;
+          display: flex; /* let the text flow to the right, vertical center */
+          justify-content: flex-end;
+          text-align: right;
+          align-items: center;
+      }
+
+      .developer {
+          background-color: var(--developer-color);
+      }
+
+      .project {
+          background-color: var(--project-color);
+      }
+
+      .topic.developer {
+          background-repeat: no-repeat;
+          background-size: 6em;
+          background-position: left top;
+          color: white;
+          border: 4px solid var(--developer-color);
+      }
+
+      .topic.project {
+          color: white;
+          --pid-color: var(--project-color);
+          border: 4px solid var(--project-color);
+          background-image: linear-gradient(90deg, var(--pid-color), var(--pid-color) 6em, transparent 6em);
+          background-blend-mode: exclusion;
+      }
+
+      .week {
+          border-radius: 0.5em;
+          position: relative; /* allow the yellow overlay to position itself absolutely against this */
+          align-self: end; /* the content in the grid cells must float to the bottom */
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+      }
+
+      .week.developer {
+          border: .3em 0 1px 0px var(--developer-color),
+          var(--drop-shadow);
+          background: var(--developer-color);
+      }
+
+      .week.project {
+          border: .3em 0 1px 0px var(--project-color),
+          var(--drop-shadow);
+          color: white;
+          background: var(--project-color);
+      }
+
+      .header {
+          background-color: transparent;
+          text-align: center;
+          font-weight: bold;
+          padding: 1em;
+          border-bottom: 1px solid black;
+      }
+
+      .assignment {
+          border: 1em solid var(--drop-shadow);
+          padding: 0.5em;
+          border-radius: 1em;
+          overflow: hidden;
+      }
+
+      .assignment.project {
+          color: white;
+          --pid-color: var(--project-color); /* to be set dynamically in assignment projector */
+          background-image: linear-gradient(90deg, var(--pid-color), var(--pid-color) 15%, transparent 15%);
+          background-blend-mode: exclusion;
+          padding: 0.5em 0.5em 0.5em 17%;
+      }
+
+      .assignment.project:hover{
+          background-image: linear-gradient(90deg, var(--pid-color), var(--pid-color) 15%, var(--hightlight-overlay) 15%);
+      }
+
+      .assignment.developer {
+          padding: 0.5em 0.5em 0.5em 17%;
+      }
+
+      .assignment.developer:hover{
+          background-color: var(--hightlight-overlay);
+      }
+
+      /* https://css-tricks.com/solved-with-css-logical-styling-based-on-the-number-of-given-elements/ */
+      div:first-child:nth-last-child(3){
+          background-color: red;
+      }
+
+      .soll {
+          z-index: 10;
+          border: 1px solid white;
+          border-top-width: 2px;
+          border-radius: 0.5rem;
+          position: absolute;
+          bottom: -1px;
+          left: -1px;
+          width: 100%;
+          user-input: none;
+          user-select: none;
+          text-align: center;
+          font-size: 2em;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          /* default, to be overridden when live: */
+          background-color: transparent;
+          opacity: 0.5;
+          pointer-events: none;
+          color: transparent;
+      }
+
+      .soll.live { /* make sure to have higher specificity */
+          background-color: var(--hightlight-overlay);
+          opacity: 0.7;
+          pointer-events: auto;
+          color: #4DA695;
+      }
+
+      .week.drop {
+          background-color: var(--hightlight-overlay);
+      }
+      </style>
+</head>
+
+<body>
+
+<h1>Personaleinsatzplanung</h1>
+
+<main>
+    <div id="topicsOverWeeks"></div>
+</main>
+
+
+<script>
+  window.grailsServerName = "localhost";
+  window.grailsServerPort = "8080";
+  window.restPath         = '/developers';
+  window.appRootId        = 'topicsOverWeeks';                    // keep page specifics in the page
+</script>
+
+</body>
+</html>
